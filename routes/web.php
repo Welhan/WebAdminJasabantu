@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\MitraController;
+use App\Http\Controllers\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [indexController::class, 'index']);
+
+Route::prefix('/mitra-management')->group(function () {
+    Route::get('/', [MitraController::class, 'index']);
+    Route::get('/getDataMitra', [MitraController::class, 'getDataMitra']);
+    Route::get('/newMitra', [MitraController::class, 'newMitra']);
 });
+// Route::get('/user-management', [UserController::class, 'index']);
