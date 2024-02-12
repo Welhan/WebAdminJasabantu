@@ -5,8 +5,7 @@
     <div class="col">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h2 class="text-primary">Mitra Management</h2>
-                <button class="btn btn-primary" type="button" id="newMitra">New Mitra</button>
+                <h2 class="text-primary">User</h2>
             </div>
             <div class="card-body">
                 <div class="formFilter mb-3">
@@ -53,28 +52,9 @@
 @endsection
 @section('script')
 <script>
-    $("#newMitra").on("click", function(e){
-        e.preventDefault()
+    function getDataUser() {
         $.ajax({
-            url : "/mitra-management/newMitra",
-            type : "GET",
-            dataType : "JSON",
-            success: function(response){
-                if(response.view){
-                    $("#viewModal").show()
-                    $("#viewModal").html(response.view)
-                    $("#modalNewMitra").modal('show')
-                }
-            },
-            error : function(xhr, res, error){
-                alert(error)
-            }
-        })
-    })
-
-    function getDataMitra() {
-        $.ajax({
-            url: '/mitra-management/getData',
+            url: '/user-management/getData',
             data: {},
             beforeSend: function() {
                 $('#tableData').hide();
@@ -92,9 +72,12 @@
     }
 
         
-    function editMitra() {
+    function editUser(id) {
         $.ajax({
-            url: '/mitra-management/editMitra',
+            url: '/user-management/editUser',
+            data: {
+                id
+            },
             beforeSend: function() {
                 $('.btn').attr('disabled', 'disabled');
             },
@@ -102,7 +85,7 @@
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalEditMitra").modal('show')
+                    $("#modalEditUser").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -112,7 +95,7 @@
     }
 
     $(document).ready(function () {
-        getDataMitra();
+        getDataUser();
     });
 </script>
 @endsection
