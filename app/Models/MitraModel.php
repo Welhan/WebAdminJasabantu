@@ -19,4 +19,11 @@ class MitraModel extends Model
             ->get();
         return $sql;
     }
+
+    public static function summaryMitra()
+    {
+        $sql = DB::table((new self())->getTable())
+            ->count('ID');
+        return $sql;
+    }
 }
