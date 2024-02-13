@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class AuthModel extends Model
 {
-    use HasFactory;
+    protected $table = "user";
+
+    protected $guarded = ["ID"];
+
+    public static function getMitra()
+    {
+        $sql = DB::table((new self())->getTable())
+            ->select()
+            ->get();
+        return $sql;
+    }
 }
