@@ -92,11 +92,11 @@
     }
 
         
-    function editMitra() {
+    function editMitra(id) {
         $.ajax({
             url: '/mitra-management/editMitra',
-            beforeSend: function() {
-                $('.btn').attr('disabled', 'disabled');
+            data: {
+                id
             },
             success: function(response) {
                 if(response.view){
@@ -111,8 +111,33 @@
         });
     }
 
+    function deleteMitra(id) {
+        $.ajax({
+            url: '/mitra-management/deleteMitra',
+            data: {
+                id
+            },
+            success: function(response) {
+                if(response.view){
+                    $("#viewModal").show()
+                    $("#viewModal").html(response.view)
+                    $("#modalDeleteMitra").modal('show')
+                }
+            },
+            error : function(xhr, res, error){
+                alert(error)
+            }
+        });
+    }
+
     $(document).ready(function () {
         getDataMitra();
+
+        $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
     });
 </script>
 @endsection

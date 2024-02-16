@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     function index()
     {
-        $client = new Client();
+        // $client = new Client();
         // $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getUser', [
         //     'curl' => [
         //         CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
@@ -48,7 +48,7 @@ class UserController extends Controller
 
             $client = new Client();
             try {
-                $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getMitra', [
+                $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getUser', [
                     'curl' => [
                         CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
                         CURLOPT_RETURNTRANSFER => true
@@ -105,6 +105,16 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $view = view('user/modals/editUser')->render();
+            return response()->json(['view' => $view], 200);
+        } else {
+            return redirect()->route('/user-management');
+        }
+    }
+
+    function deleteUser(Request $request)
+    {
+        if ($request->ajax()) {
+            $view = view('user/modals/deleteUser')->render();
             return response()->json(['view' => $view], 200);
         } else {
             return redirect()->route('/user-management');

@@ -49,8 +49,8 @@
                         var dropdownHtml = '<div class="dropdown">' +
                                             '<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item">Edit</a>' +
-                                                '<a class="dropdown-item" href="#">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="editUser()">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deleteUser()">Delete</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;

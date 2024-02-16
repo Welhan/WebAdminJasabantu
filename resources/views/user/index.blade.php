@@ -72,15 +72,9 @@
     }
 
         
-    function editUser(id) {
+    function editUser() {
         $.ajax({
             url: '/user-management/editUser',
-            data: {
-                id
-            },
-            beforeSend: function() {
-                $('.btn').attr('disabled', 'disabled');
-            },
             success: function(response) {
                 if(response.view){
                     $("#viewModal").show()
@@ -94,8 +88,30 @@
         });
     }
 
+    function deleteUser() {
+        $.ajax({
+            url: '/user-management/deleteUser',
+            success: function(response) {
+                if(response.view){
+                    $("#viewModal").show()
+                    $("#viewModal").html(response.view)
+                    $("#modalDeleteUser").modal('show')
+                }
+            },
+            error : function(xhr, res, error){
+                alert(error)
+            }
+        });
+    }
+
     $(document).ready(function () {
         getDataUser();
+
+        $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
     });
 </script>
 @endsection
