@@ -27,3 +27,28 @@ if (!function_exists('generate_submenu')) {
         return $sql;
     }
 }
+
+if (!function_exists('rot15')) {
+    function rot15($string)
+    {
+        $alphabet = str_split(env('ROT_KEY'));
+        $first = array_slice($alphabet, env('ROT_NUM'));
+        $second = array_slice($alphabet, 0, env('ROT_NUM'));
+        $rotatedAlphabet = array_merge($first, $second);
+        $map = array_combine($alphabet, $rotatedAlphabet);
+        return strtr($string, $map);
+    }
+}
+
+
+if (!function_exists('reverseRot15')) {
+    function reverseRot15($string)
+    {
+        $alphabet = str_split(env('ROT_KEY'));
+        $first = array_slice($alphabet, env('ROT_NUM'));
+        $second = array_slice($alphabet, 0, env('ROT_NUM'));
+        $rotatedAlphabet = array_merge($first, $second);
+        $map = array_combine($rotatedAlphabet, $alphabet);
+        return strtr($string, $map);
+    }
+}

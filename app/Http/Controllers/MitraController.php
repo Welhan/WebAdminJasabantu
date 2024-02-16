@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\MitraModel;
 use App\Models\UserModel;
-use App\Models\SystabModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -26,6 +25,12 @@ class MitraController extends Controller
         // $bodyContent = $response->getBody()->getContents();
         // $dataArray = json_decode($bodyContent, true);
         // return $response;
+
+        // $encodedString = "Q0NEZWRoRGRmZWVjdlZVTA=="; 
+        // $decodedString = base64_decode($encodedString);
+
+        // $rot15 = reverseRot15($decodedString);
+        // return $rot15;
 
         $data = [
             'title' => 'Mitra Management',
@@ -109,8 +114,8 @@ class MitraController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'Name' => 'required|string|max:255',
-                'Email' => 'required|email|unique:user',
-                'Phone' => 'required|unique:user',
+                'Email' => 'required|email',
+                'Phone' => 'required',
                 'Address' => 'required',
                 'Pin' => 'required',
             ]);
@@ -118,43 +123,53 @@ class MitraController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
             } else {
-                $counter = SystabModel::getDataCounter()[0]->Value;
+                $url = env('URL_API') . 'api/registerMitra';
 
-                if ($counter == NULL) {
-                    $counter = 1;
-                } else {
-                    $counter = (int)$counter + 1;
-                }
-                $prefix = SystabModel::getDataPrefix()[0]->Value;
-                $number = $prefix . mt_rand(10000, 99999) . $counter;
-                $uniqueid = $request->User ?? $number;
                 $data = [
-                    'UniqueID' => $uniqueid,
-                    'Name' => $request->Name,
-                    'Email' => $request->Email,
-                    'Phone' => $request->Phone,
-                    'Pin' => $request->Pin,
-                    'Address' => $request->Address,
-                    'CreatedDate' => date('Y-m-d H-i-s'),
+                    $request->Name,
+                    $request->Email,
+                    $request->Phone,
+                    $request->Address,
+                    $request->Pin,
                 ];
 
-                $process = MitraModel::saveMitra($data);
+                $datamitra = implode(":", $data);
+                $rot15 = rot15($datamitra);
+                $mitra = base64_encode($rot15);
 
-                if ($process) {
-                    Session::flash('message', 'Mitra Created Successfully');
-                    Session::flash('alert', 'alert-success');
-                    $msg = [
-                        'success' => 'Mitra created successfully.'
-                    ];
-                } else {
-                    Session::flash([
-                        'message' => 'Create Mitra Failed',
-                        'alert' => 'alert-danger'
+                try {
+                    $client = new Client();
+                    $response = $client->post($url, [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Accept' => 'application/json', // Specify expected response format
+                            'Authorization' => "Bearer $mitra",
+                        ],
                     ]);
-                    $msg = [
-                        'failed' => 'Create Mitra Failed'
-                    ];
+
+                    $responseBody = $response->getBody()->getContents();
+                    $message = json_decode($responseBody, true);
+
+                    if ($response->getStatusCode() === 200) {
+                        Session::flash('message', $message['message']);
+                        Session::flash('alert', 'alert-success');
+                        $msg = [
+                            'success' => $message['message']
+                        ];
+                    } else {
+                        Session::flash([
+                            'message' => $message['message'],
+                            'alert' => 'alert-danger'
+                        ]);
+                        $msg = [
+                            'failed' => $message['message']
+                        ];
+                    }
+                } catch (Exception $e) {
+                    // Handle network errors or other exceptions
+                    echo "Registration failed due to an error: " . $e->getMessage();
                 }
+
                 return response()->json($msg);
             }
         }

@@ -48,7 +48,8 @@ class UserController extends Controller
 
             $client = new Client();
             try {
-                $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getUser', [
+                $url = env('URL_API') . '/api/getUser';
+                $response = $client->get($url, [
                     'curl' => [
                         CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
                         CURLOPT_RETURNTRANSFER => true
