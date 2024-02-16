@@ -12,10 +12,10 @@ class MitraModel extends Model
 
     protected $guarded = ["ID"];
 
-    public static function getMitra()
+    public static function getMitra($start, $length)
     {
         $sql = DB::table((new self())->getTable())
-            ->select()
+            ->select()->offset($start)->limit($length)
             ->get();
         return $sql;
     }
@@ -24,6 +24,27 @@ class MitraModel extends Model
     {
         $sql = DB::table((new self())->getTable())
             ->count('ID');
+        return $sql;
+    }
+
+    public static function saveMitra($data)
+    {
+        $sql = DB::table((new self())->getTable())
+            ->insert($data);
+        return $sql;
+    }
+
+    public static function updateMitra($uniqueid, $data)
+    {
+        $sql = DB::table((new self())->getTable())
+            ->where('UniqueID', $uniqueid)->update($data);
+        return $sql;
+    }
+
+    public static function deleteMitra($uniqueid)
+    {
+        $sql = DB::table((new self())->getTable())
+            ->where('UniqueID', $uniqueid)->delete();
         return $sql;
     }
 }

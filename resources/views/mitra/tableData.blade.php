@@ -41,16 +41,19 @@
                 {
                     data: 'Address',
                 },
-                {
-                    data: 'CreatedDate',
+                {    data: "CreatedDate",
+                    "render": function(data, type, row) {
+                        var date = row['CreatedDate'];
+                        return date;
+                    }
                 },
                 {    data: "Name",
                     "render": function(data, type, row) {
                         var dropdownHtml = '<div class="dropdown">' +
-                                            '<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
+                                            '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item" onclick="editMitra()">Edit</a>' +
-                                                '<a class="dropdown-item" onclick="deleteMitra()">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="editMitra('+ row['ID'] +')">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deleteMitra('+ row['ID'] +')">Delete</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;
