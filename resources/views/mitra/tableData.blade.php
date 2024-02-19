@@ -47,13 +47,14 @@
                         return date;
                     }
                 },
-                {    data: "Name",
+                {    data: "UniqueID",
                     "render": function(data, type, row) {
                         var dropdownHtml = '<div class="dropdown">' +
                                             '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item" onclick="editMitra('+ row['ID'] +')">Edit</a>' +
-                                                '<a class="dropdown-item" onclick="deleteMitra('+ row['ID'] +')">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="editMitra('+ row['UniqueID'] +')">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deleteMitra('+ row['UniqueID'] +')">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="resetPin('+ row['UniqueID'] +')">Reset PIN</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;

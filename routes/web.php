@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\IndexController;
@@ -26,6 +27,7 @@ Route::prefix('/mitra-management')->group(function () {
     Route::get('/newMitra', [MitraController::class, 'newMitra']);
     Route::get('/editMitra', [MitraController::class, 'editMitra']);
     Route::get('/deleteMitra', [MitraController::class, 'deleteMitra']);
+    Route::get('/resetPin', [MitraController::class, 'formResetPin']);
     Route::get('/auto_generate', [MitraController::class, 'generatePin']);
     Route::get('/getUser', [MitraController::class, 'getUser']);
     Route::post('/store', [MitraController::class, 'store']);
@@ -41,3 +43,8 @@ Route::prefix('/user-management')->group(function () {
     Route::get('/editUser', [UserController::class, 'editUser']);
     Route::get('/deleteUser', [UserController::class, 'deleteUser']);
 });
+
+
+Route::get('/login', [AuthController::class, 'index']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/logout', [AuthController::class, 'logout']);

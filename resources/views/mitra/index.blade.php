@@ -111,6 +111,25 @@
         });
     }
 
+    function resetPin(id) {
+        $.ajax({
+            url: '/mitra-management/resetPin',
+            data: {
+                id
+            },
+            success: function(response) {
+                if(response.view){
+                    $("#viewModal").show()
+                    $("#viewModal").html(response.view)
+                    $("#resetPinMitra").modal('show')
+                }
+            },
+            error : function(xhr, res, error){
+                alert(error)
+            }
+        });
+    }
+
     function deleteMitra(id) {
         $.ajax({
             url: '/mitra-management/deleteMitra',

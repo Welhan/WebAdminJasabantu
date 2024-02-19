@@ -52,3 +52,33 @@ if (!function_exists('reverseRot15')) {
         return strtr($string, $map);
     }
 }
+
+if (!function_exists('formattedPhone')) {
+    function formattedPhone($phone)
+    {
+        if ($phone && is_numeric($phone)) {
+            if (substr($phone, 0, 1) == '0') {
+                return '62' . substr($phone, 1);
+            } elseif (substr($phone, 0, 2) != '62') {
+                return '62' . $phone;
+            }
+        }
+        return $phone;
+    }
+}
+
+if (!function_exists('verifyPhone')) {
+    function verifyPhone($phone)
+    {
+        $phone = formattedPhone($phone);
+
+        if (!is_numeric($phone)) {
+            return false;
+        } elseif (!(strlen($phone) >= 10 and strlen($phone) <= 14)) {
+            return false;
+        } elseif (substr($phone, 0, 3) != '628') {
+            return false;
+        }
+        return true;
+    }
+}

@@ -14,23 +14,31 @@ class MitraController extends Controller
 {
     function index()
     {
+        // $url = env('URL_API') . 'api/loginAdmin';
+
+        // $data = [
+        //     'admin@gmail.com',
+        //     'admin'
+        // ];
+
+        // $datamitra = implode("#", $data);
+        // $rot15 = rot15($datamitra);
+        // $token = base64_encode($rot15);
+
         // $client = new Client();
-        // $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getMitra', [
-        //     'curl' => [
-        //         CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
-        //         CURLOPT_RETURNTRANSFER => true
-        //     ]
+        // $response = $client->post($url, [
+        //     'headers' => [
+        //         'Content-Type' => 'application/json',
+        //         'Accept' => 'application/json', // Specify expected response format
+        //         'Authorization' => "Bearer $token",
+        //     ],
         // ]);
 
-        // $bodyContent = $response->getBody()->getContents();
-        // $dataArray = json_decode($bodyContent, true);
-        // return $response;
+        // $responseBody = $response->getBody()->getContents();
+        // $status = $response->getStatusCode();
+        // $message = json_decode($responseBody, true);
 
-        // $encodedString = "Q0NEZWRoRGRmZWVjdlZVTA=="; 
-        // $decodedString = base64_decode($encodedString);
-
-        // $rot15 = reverseRot15($decodedString);
-        // return $rot15;
+        // return $message;
 
         $data = [
             'title' => 'Mitra Management',
@@ -52,19 +60,67 @@ class MitraController extends Controller
 
             $param['draw'] = isset($_REQUEST['draw']) ? $_REQUEST['draw'] : '';
             $keySearch = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : '';
-            $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : '';
-            $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : '';
+            $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
+            $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : 0;
 
-            $mitra =  MitraModel::getMitra($start, $length);
-            $summary =  MitraModel::summaryMitra();
+            $client = new Client();
+            try {
+                $params = [
+                    'start' => $start,
+                    'length' => $length
+                ];
+                $token = session()->get('token');
+                $url = env('URL_API') . '/api/getMitra';
+                $response = $client->post($url, [
+                    'curl' => [
+                        CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                        CURLOPT_RETURNTRANSFER => true
+                    ],
+                    'json' => $params,
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json', // Specify expected response format
+                        'Authorization' => "Bearer $token",
+                    ],
+                ]);
 
+                if ($response) {
+                    if ($response->getStatusCode() === 200) {
+                        $bodyContent = $response->getBody()->getContents();
+                        $dataArray = json_decode($bodyContent, true);
+                        $datamitra = $dataArray['data'];
+                        $summary = $dataArray['summary'];
 
-            $msg = [
-                'draw' => intval($param['draw']),
-                'recordsTotal' => $summary,
-                'recordsFiltered' => $summary,
-                'data' => $mitra
-            ];
+                        $msg = [
+                            'draw' => intval($param['draw']),
+                            'recordsTotal' => $summary,
+                            'recordsFiltered' => $summary,
+                            'data' => $datamitra
+                        ];
+                    } else {
+                        $msg = [
+                            'draw' => intval($param['draw']),
+                            'recordsTotal' => 0,
+                            'recordsFiltered' => 0,
+                            'data' => []
+                        ];
+                    }
+                } else {
+                    $msg = [
+                        'draw' => intval($param['draw']),
+                        'recordsTotal' => 0,
+                        'recordsFiltered' => 0,
+                        'data' => []
+                    ];
+                }
+            } catch (Exception $e) {
+                $msg = [
+                    'draw' => intval($param['draw']),
+                    'recordsTotal' => 0,
+                    'recordsFiltered' => 0,
+                    'data' => []
+                ];
+            }
             return response()->json($msg, 200);
         } else {
             return redirect()->route('/mitra-management');
@@ -167,7 +223,7 @@ class MitraController extends Controller
                     }
                 } catch (Exception $e) {
                     // Handle network errors or other exceptions
-                    echo "Registration failed due to an error: " . $e->getMessage();
+                    echo "Error: " . $e->getMessage();
                 }
 
                 return response()->json($msg);
@@ -179,8 +235,20 @@ class MitraController extends Controller
     {
         if ($request->ajax()) {
             $id = $request->id;
+            $url = env('URL_API') . '/api/getMitra';
+            $client = new Client();
+            $response = $client->get($url);
+
+            $bodyContent = $response->getBody()->getContents();
+            $dataArray = json_decode($bodyContent, true);
+            $datamitra = $dataArray['data'];
+
+            $mitra = collect($datamitra)->filter(function ($datamitra) {
+                return $datamitra['UniqueID'];
+            });
+
             $data = [
-                'mitra' => MitraModel::findOrFail($id)
+                'mitra' => $mitra
             ];
             $view = view('mitra/modals/editMitra', $data)->render();
             return response()->json(['view' => $view], 200);
@@ -268,6 +336,22 @@ class MitraController extends Controller
                 ];
             }
             return response()->json($msg);
+        }
+    }
+
+    function formResetPin(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $id = $request->id;
+            $data = [
+                'id' => $id
+            ];
+
+            $view = view('mitra/modals/resetPin', $data)->render();
+            return response()->json(['view' => $view], 200);
+        } else {
+            return redirect()->route('mitra-management');
         }
     }
 }
