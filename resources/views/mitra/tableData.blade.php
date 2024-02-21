@@ -7,8 +7,9 @@
 <table class="table table-bordered data-table">
     <thead>
         <tr>
-            <th>UniqueID</th>
             <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
             <th>Address</th>
             <th>Created Date</th>
             <th width="100px">Action</th>
@@ -29,32 +30,43 @@
             searching : false,
             ajax: {
                 url: "/mitra-management/tableData",
+                data: {
+                    email: '<?= $email; ?>',
+                    phone: '<?= $phone; ?>',
+                    name: '<?= $name; ?>',
+                },
                 type: "GET",
                 dataType: "json"
             },
             columns: [{
-                    data: 'UniqueID',
+                    data: 'Name',
                 },
                 {
-                    data: 'Name',
+                    data: 'Email',
+                },
+                {
+                    data: 'Phone',
                 },
                 {
                     data: 'Address',
                 },
                 {    data: "CreatedDate",
                     "render": function(data, type, row) {
-                        var date = row['CreatedDate'];
-                        return date;
+                        if (row['CreatedDate']) {
+                            let Date = moment(row['CreatedDate'])
+                            return Date.locale('id').format('D MMM YYYY, HH:mm:ss');
+                        }
+                        return '';
                     }
                 },
                 {    data: "UniqueID",
                     "render": function(data, type, row) {
+                        uniqueid = row['UniqueID'].toString()
                         var dropdownHtml = '<div class="dropdown">' +
                                             '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item" onclick="editMitra('+ row['UniqueID'] +')">Edit</a>' +
-                                                '<a class="dropdown-item" onclick="deleteMitra('+ row['UniqueID'] +')">Delete</a>' +
-                                                '<a class="dropdown-item" onclick="resetPin('+ row['UniqueID'] +')">Reset PIN</a>' +
+                                                '<a class="dropdown-item" onclick="editMitra('+ uniqueid +')">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deleteMitra('+ uniqueid +')">Delete</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;

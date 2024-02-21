@@ -8,18 +8,18 @@
                 <div class="modal-body">
                     @csrf
 
-                    <input type="hidden" id="Uniqueid" name="Uniqueid" value="{{ $mitra['UniqueID'] }}">
+                    <input type="hidden" class="form-control" id="Uniqueid" name="Uniqueid" readonly value="{{ $id }}">
 
                     <table class="table table-bordered">
                         <thead>
-                            <th>Unique ID</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Phone</th>
                         </thead>
                         <tbody>
-                            <th>{{ $mitra['UniqueID'] }}</th>
                             <th>{{ $mitra['Name'] }}</th>
                             <th>{{ $mitra['Email'] }}</th>
+                            <th>{{ $mitra['Phone'] }}</th>
                         </tbody>
                     </table>
                 </div>

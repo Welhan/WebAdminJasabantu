@@ -22,16 +22,17 @@ class AuthController extends Controller
     function login(Request $request)
     {
         if ($request->ajax()) {
-            $url = env('URL_API') . 'api/loginAdmin';
+            $url = env('URL_API_MITRA') . 'api/loginAdmin';
 
             $data = [
                 $request->Email,
                 $request->Password,
             ];
 
-            $datamitra = implode("#", $data);
+            $datamitra = implode(env('DELIMITTER_ADMIN'), $data);
             $rot15 = rot15($datamitra);
-            $token = base64_encode($rot15);
+            $datalogin = base64_encode($rot15);
+            $token = env('PREFIX_KEY') . $datalogin;
 
             try {
                 $client = new Client();
@@ -71,8 +72,8 @@ class AuthController extends Controller
 
     function logout()
     {
-        $url = env('URL_API') . 'api/logoutAdmin';
-        $token = session()->get('token');
+        $url = env('URL_API_MITRA') . 'api/logoutAdmin';
+        $token =  session()->get('token');
         $client = new Client();
         $response = $client->post($url, [
             'headers' => [
@@ -81,7 +82,14 @@ class AuthController extends Controller
                 'Authorization' => "Bearer $token",
             ],
         ]);
+
+        $responseBody = $response->getBody()->getContents();
+        $message = json_decode($responseBody, true);
+
         Session::flush();
+
+        Session::flash('message', $message['message']);
+        Session::flash('alert', 'alert-success');
         return redirect('login');
     }
 }

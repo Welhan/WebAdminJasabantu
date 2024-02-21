@@ -34,6 +34,8 @@ class UserController extends Controller
         if ($request->ajax()) {
             $tabledata = view('user.tableData')->render();
             return response()->json($tabledata);
+        } else {
+            return redirect('user-management');
         }
     }
 
@@ -98,7 +100,7 @@ class UserController extends Controller
                 return response()->json($msg, 200);
             }
         } else {
-            return redirect()->route('/user-management');
+            return redirect('user-management');
         }
     }
 
@@ -108,7 +110,7 @@ class UserController extends Controller
             $view = view('user/modals/editUser')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('/user-management');
+            return redirect('user-management');
         }
     }
 
@@ -118,7 +120,7 @@ class UserController extends Controller
             $view = view('user/modals/deleteUser')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('/user-management');
+            return redirect('user-management');
         }
     }
 }

@@ -27,8 +27,9 @@ Route::prefix('/mitra-management')->group(function () {
     Route::get('/newMitra', [MitraController::class, 'newMitra']);
     Route::get('/editMitra', [MitraController::class, 'editMitra']);
     Route::get('/deleteMitra', [MitraController::class, 'deleteMitra']);
-    Route::get('/resetPin', [MitraController::class, 'formResetPin']);
     Route::get('/auto_generate', [MitraController::class, 'generatePin']);
+    // Route::get('/checkEmail', [MitraController::class, 'checkEmail']);
+    // Route::get('/checkPhone', [MitraController::class, 'checkPhone']);
     Route::get('/getUser', [MitraController::class, 'getUser']);
     Route::post('/store', [MitraController::class, 'store']);
     Route::post('/update', [MitraController::class, 'update']);
