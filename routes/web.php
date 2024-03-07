@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\UserController;
 
@@ -43,6 +44,18 @@ Route::prefix('/user-management')->group(function () {
     Route::get('/tableData', [UserController::class, 'tableData']);
     Route::get('/editUser', [UserController::class, 'editUser']);
     Route::get('/deleteUser', [UserController::class, 'deleteUser']);
+});
+
+Route::prefix('/midtrans')->group(function () {
+    Route::get('/', [MidtransController::class, 'index']);
+    Route::get('/getData', [MidtransController::class, 'getData']);
+    Route::get('/tableData', [MidtransController::class, 'tableData']);
+    Route::get('/newMidtrans', [MidtransController::class, 'newMidtrans']);
+    Route::get('/editMidtrans', [MidtransController::class, 'editMidtrans']);
+    Route::get('/deleteMidtrans', [MidtransController::class, 'deleteMidtrans']);
+    Route::post('/store', [MidtransController::class, 'store']);
+    Route::post('/update', [MidtransController::class, 'update']);
+    Route::post('/delete', [MidtransController::class, 'delete']);
 });
 
 
