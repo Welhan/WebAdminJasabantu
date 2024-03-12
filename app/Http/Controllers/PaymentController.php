@@ -148,6 +148,7 @@ class PaymentController extends Controller
 
             $type = $request->Type;
             $value = $request->Value;
+            $activeF = $request->ActiveF;
 
             $id = $request->ID;
 
@@ -158,7 +159,7 @@ class PaymentController extends Controller
                 $data = [
                     'Payment_type' => $type,
                     'Value' => $value,
-                    'ActiveF' => 1,
+                    'ActiveF' => is_null($activeF) ? '0' : '1',
                     'Last_Date' => date('Y-m-d H-i-s'),
                     'Last_User' => 1,
                 ];

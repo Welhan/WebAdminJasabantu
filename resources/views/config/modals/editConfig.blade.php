@@ -20,6 +20,17 @@
                             value="{{ $config['Value'] }}">
                         <div id="errValue" class="invalid-feedback"></div>
                     </div>
+
+                    <div class="form-check">
+                        <div class="col-sm-10">
+                            <input class="form-check-input" type="checkbox" id="cbxEditActiveF" name="ActiveF"
+                                <?=($config['ActiveF']==1) ? 'checked' : '' ; ?>>
+                            <label class="form-label" for="cbxEditActiveF">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" id="btnProcess">Submit</button>
                     </div>

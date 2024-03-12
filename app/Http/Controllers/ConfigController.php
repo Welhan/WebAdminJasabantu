@@ -149,6 +149,7 @@ class ConfigController extends Controller
 
             $config = $request->Config;
             $value = $request->Value;
+            $activeF = $request->ActiveF;
 
             $id = $request->ID;
 
@@ -159,7 +160,7 @@ class ConfigController extends Controller
                 $data = [
                     'Config' => $config,
                     'Value' => $value,
-                    'ActiveF' => 1,
+                    'ActiveF' => is_null($activeF) ? '0' : '1',
                     'Last_Date' => date('Y-m-d H-i-s'),
                     'Last_User' => 1,
                 ];

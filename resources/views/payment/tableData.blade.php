@@ -7,9 +7,9 @@
 <table class="table table-bordered data-table">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Payment Type</th>
             <th>Value</th>
+            <th>Active</th>
             <th width="100px">Action</th>
         </tr>
     </thead>
@@ -31,14 +31,26 @@
                 type: "GET",
                 dataType: "json"
             },
-            columns: [{
-                    data: 'ID',
-                },
+            columns: [
                 {
                     data: 'Payment_type',
                 },
                 {
                     data: 'Value',
+                },
+                {
+                    "render": function(data, type, row) {
+                        let allowF = '<input type="checkbox" class="btn-check" disabled ';
+                        if (row['ActiveF'] == 1) {
+                            allowF += 'checked';
+                        } else {
+                            allowF += '';
+                        }
+                        allowF += '>';
+                        allowF += '</div>';
+
+                        return allowF;
+                    }
                 },
                 {    data: "ID",
                     "render": function(data, type, row) {

@@ -9,6 +9,7 @@
         <tr>
             <th>Config</th>
             <th>Value</th>
+            <th>Active</th>
             <th width="100px">Action</th>
         </tr>
     </thead>
@@ -37,6 +38,20 @@
                 },
                 {
                     data: 'Value',
+                },
+                {
+                    "render": function(data, type, row) {
+                        let allowF = '<input type="checkbox" class="btn-check" disabled ';
+                        if (row['ActiveF'] == 1) {
+                            allowF += 'checked';
+                        } else {
+                            allowF += '';
+                        }
+                        allowF += '>';
+                        allowF += '</div>';
+
+                        return allowF;
+                    }
                 },
                 {    data: "ID",
                     "render": function(data, type, row) {
