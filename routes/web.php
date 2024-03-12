@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConfigController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\MitraController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -46,17 +46,35 @@ Route::prefix('/user-management')->group(function () {
     Route::get('/deleteUser', [UserController::class, 'deleteUser']);
 });
 
-Route::prefix('/midtrans')->group(function () {
-    Route::get('/', [MidtransController::class, 'index']);
-    Route::get('/getData', [MidtransController::class, 'getData']);
-    Route::get('/tableData', [MidtransController::class, 'tableData']);
-    Route::get('/newMidtrans', [MidtransController::class, 'newMidtrans']);
-    Route::get('/editMidtrans', [MidtransController::class, 'editMidtrans']);
-    Route::get('/deleteMidtrans', [MidtransController::class, 'deleteMidtrans']);
-    Route::post('/store', [MidtransController::class, 'store']);
-    Route::post('/update', [MidtransController::class, 'update']);
-    Route::post('/delete', [MidtransController::class, 'delete']);
+Route::prefix('/web-config')->group(function () {
+    Route::get('/', [ConfigController::class, 'index']);
+    Route::get('/getData', [ConfigController::class, 'getData']);
+    Route::get('/tableData', [ConfigController::class, 'tableData']);
+    Route::get('/newConfig', [ConfigController::class, 'newConfig']);
+    Route::get('/editConfig', [ConfigController::class, 'editConfig']);
+    Route::get('/deleteConfig', [ConfigController::class, 'deleteConfig']);
+    Route::post('/store', [ConfigController::class, 'store']);
+    Route::post('/update', [ConfigController::class, 'update']);
+    Route::post('/delete', [ConfigController::class, 'delete']);
 });
+
+// Route::prefix('/midtrans')->group(function () {
+//     Route::get('/', [MidtransController::class, 'wd_index']);
+//     Route::get('/newMidtransWD', [MidtransController::class, 'newMidtransWD']);
+// });
+
+Route::prefix('/payment-method')->group(function () {
+    Route::get('/', [PaymentController::class, 'index']);
+    Route::get('/getData', [PaymentController::class, 'getData']);
+    Route::get('/tableData', [PaymentController::class, 'tableData']);
+    Route::get('/newPayment', [PaymentController::class, 'newPayment']);
+    Route::get('/editPayment', [PaymentController::class, 'editPayment']);
+    Route::get('/deletePayment', [PaymentController::class, 'deletePayment']);
+    Route::post('/store', [PaymentController::class, 'store']);
+    Route::post('/update', [PaymentController::class, 'update']);
+    Route::post('/delete', [PaymentController::class, 'delete']);
+});
+
 
 
 Route::get('/login', [AuthController::class, 'index']);

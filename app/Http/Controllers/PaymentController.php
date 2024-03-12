@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MidtransModel;
-use App\Models\UserModel;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Models\PaymentModel;
+use App\Models\ConfigModel;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Session;
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Validator;
+use PSpell\Config;
 
-class MidtransController extends Controller
+class PaymentController extends Controller
 {
     function index()
     {
         $data = [
-            'title' => 'Config Midtrans',
+            'title' => 'Payment Method',
         ];
-        return view("midtrans.index", $data);
+        return view("payment.index", $data);
     }
 
     public function getData(Request $request)
     {
         if ($request->ajax()) {
 
-            $tabledata = view('midtrans.tableData')->render();
+            $tabledata = view('payment.tableData')->render();
             return response()->json($tabledata);
         }
     }
@@ -39,29 +40,32 @@ class MidtransController extends Controller
             $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : 0;
 
 
-            $midtrans = MidtransModel::getMidtrans($start, $length);
-            $summary =  MidtransModel::summaryMidtrans();
+            $payment = PaymentModel::getPayment($start, $length);
+            $summary =  PaymentModel::summaryPayment();
 
             $msg = [
                 'draw' => intval($param['draw']),
                 'recordsTotal' => $summary,
                 'recordsFiltered' => $summary,
-                'data' => $midtrans
+                'data' => $payment
             ];
 
             return response()->json($msg, 200);
         } else {
-            return redirect('midtrans');
+            return redirect('payment-method');
         }
     }
 
-    function newMidtrans(Request $request)
+    function newPayment(Request $request)
     {
         if ($request->ajax()) {
-            $view = view('midtrans/modals/newMidtrans')->render();
+            $data = [
+                'payment_type' => ConfigModel::where('Config', 'payment_type')->get()
+            ];
+            $view = view('payment/modals/newPayment', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('midtrans');
+            return redirect('web-config');
         }
     }
 
@@ -70,18 +74,12 @@ class MidtransController extends Controller
         if ($request->ajax()) {
 
             $validator = Validator::make($request->all(), [
-                'Config' => 'required|string|max:255',
-                'Value1' => 'required',
-                'Value2' => 'required',
                 'Type' => 'required',
-                'Desc' => 'required',
+                'Value' => 'required',
             ]);
 
-            $config = $request->Config;
-            $value1 = $request->Value1;
-            $value2 = $request->Value2;
             $type = $request->Type;
-            $desc = $request->Desc;
+            $value = $request->Value;
 
 
             if ($validator->fails()) {
@@ -89,30 +87,27 @@ class MidtransController extends Controller
             } else {
 
                 $data = [
-                    'Config' => $config,
-                    'Value_1' => $value1,
-                    'Value_2' => $value2,
-                    'Type' => $type,
-                    'Desc' => $desc,
-                    'AllowedF' => 1,
+                    'Payment_type' => $type,
+                    'Value' => $value,
+                    'ActiveF' => 1,
                     'CDate' => date('Y-m-d H-i-s'),
                     'CUserID' => 1,
                 ];
 
 
-                $process = MidtransModel::saveMidtrans($data);
+                $process = PaymentModel::savePayment($data);
 
                 if ($process) {
-                    Session::flash('message', 'Config Midtrans Berhasil Dibuat');
+                    Session::flash('message', 'Payment Berhasil Dibuat');
                     Session::flash('alert', 'alert-success');
                     $msg = [
-                        'success' => 'Config Midtrans Berhasil Dibuat'
+                        'success' => 'Payment Berhasil Dibuat'
                     ];
                 } else {
-                    Session::flash('message', 'Config Midtrans Gagal Dibuat');
+                    Session::flash('message', 'Payment Gagal Dibuat');
                     Session::flash('alert', 'alert-danger');
                     $msg = [
-                        'failed' => 'Config Midtrans Gagal Dibuat'
+                        'failed' => 'Payment Gagal Dibuat'
                     ];
                 }
 
@@ -120,23 +115,25 @@ class MidtransController extends Controller
                 return response()->json($msg);
             }
         } else {
-            return redirect('mitra-management');
+            return redirect('payment-method');
         }
     }
 
-    function editMidtrans(Request $request)
+    function editPayment(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->id;
 
-            $midtrans = MidtransModel::findOrFail($id);
+            $payment = PaymentModel::findOrFail($id);
+
             $data = [
-                'midtrans' => $midtrans
+                'payment' => $payment,
+                'payment_type' => ConfigModel::where('Config', 'payment_type')->get()
             ];
-            $view = view('midtrans/modals/editMidtrans', $data)->render();
+            $view = view('payment/modals/editPayment', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('midtrans');
+            return redirect('payment-method');
         }
     }
 
@@ -145,18 +142,12 @@ class MidtransController extends Controller
         if ($request->ajax()) {
 
             $validator = Validator::make($request->all(), [
-                'Config' => 'required|string|max:255',
-                'Value1' => 'required',
-                'Value2' => 'required',
                 'Type' => 'required',
-                'Desc' => 'required',
+                'Value' => 'required',
             ]);
 
-            $config = $request->Config;
-            $value1 = $request->Value1;
-            $value2 = $request->Value2;
             $type = $request->Type;
-            $desc = $request->Desc;
+            $value = $request->Value;
 
             $id = $request->ID;
 
@@ -165,52 +156,49 @@ class MidtransController extends Controller
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
             } else {
                 $data = [
-                    'Config' => $config,
-                    'Value_1' => $value1,
-                    'Value_2' => $value2,
-                    'Type' => $type,
-                    'Desc' => $desc,
-                    'AllowedF' => 1,
+                    'Payment_type' => $type,
+                    'Value' => $value,
+                    'ActiveF' => 1,
                     'Last_Date' => date('Y-m-d H-i-s'),
                     'Last_User' => 1,
                 ];
 
 
-                $process = MidtransModel::updateMidtrans($id, $data);
+                $process = PaymentModel::updatePayment($id, $data);
                 if ($process) {
-                    Session::flash('message', 'Config Midtrans Berhasil Diupdate');
+                    Session::flash('message', 'Payment Berhasil Diupdate');
                     Session::flash('alert', 'alert-success');
                     $msg = [
-                        'success' => 'Config Midtrans Berhasil Diupdate'
+                        'success' => 'Payment Berhasil Diupdate'
                     ];
                 } else {
-                    Session::flash('message', 'Config Midtrans Gagal Diupdate');
+                    Session::flash('message', 'Payment Gagal Diupdate');
                     Session::flash('alert', 'alert-danger');
                     $msg = [
-                        'failed' => 'Config Midtrans Gagal Diupdate'
+                        'failed' => 'Payment Gagal Diupdate'
                     ];
                 }
 
                 return response()->json($msg);
             }
         } else {
-            return redirect('midtrans');
+            return redirect('payment-method');
         }
     }
 
-    function deleteMidtrans(Request $request)
+    function deletePayment(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->id;
-            $midtrans = MidtransModel::findOrFail($id);
+            $payment = PaymentModel::findOrFail($id);
             $data = [
-                'midtrans' => $midtrans
+                'payment' => $payment
             ];
 
-            $view = view('midtrans/modals/deleteMidtrans', $data)->render();
+            $view = view('payment/modals/deletePayment', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('midtrans');
+            return redirect('payment-method');
         }
     }
 
@@ -218,23 +206,25 @@ class MidtransController extends Controller
     {
         if ($request->ajax()) {
             $id = $request->ID;
-            $process = MidtransModel::deleteMidtrans($id);
+            $process = PaymentModel::deletePayment($id);
 
             if ($process) {
-                Session::flash('message', 'Data Config Berhasil Dihapus');
+                Session::flash('message', 'Data Payment Berhasil Dihapus');
                 Session::flash('alert', 'alert-success');
                 $msg = [
-                    'success' => 'Data Config Berhasil Dihapus'
+                    'success' => 'Data Payment Berhasil Dihapus'
                 ];
             } else {
-                Session::flash('message', 'Data Config Gagal Dihapus');
+                Session::flash('message', 'Data Payment Gagal Dihapus');
                 Session::flash('alert', 'alert-danger');
                 $msg = [
-                    'failed' => 'Data Config Gagal Dihapus'
+                    'failed' => 'Data Payment Gagal Dihapus'
                 ];
             }
+
+            return response()->json($msg);
         } else {
-            return redirect('midtrans');
+            return redirect('payment-method');
         }
     }
 }

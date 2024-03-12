@@ -7,11 +7,9 @@
 <table class="table table-bordered data-table">
     <thead>
         <tr>
-            <th>Config</th>
-            <th>Value 1</th>
-            <th>Value 2</th>
-            <th>Type</th>
-            <th>Description</th>
+            <th>ID</th>
+            <th>Payment Type</th>
+            <th>Value</th>
             <th width="100px">Action</th>
         </tr>
     </thead>
@@ -29,26 +27,18 @@
             lengthChange : false,
             searching : false,
             ajax: {
-                url: "/midtrans/tableData",
-                data: {
-                },
+                url: "/payment-method/tableData",
                 type: "GET",
                 dataType: "json"
             },
             columns: [{
-                    data: 'Config',
+                    data: 'ID',
                 },
                 {
-                    data: 'Value_1',
+                    data: 'Payment_type',
                 },
                 {
-                    data: 'Value_2',
-                },
-                {
-                    data: 'Type',
-                },
-                {       
-                    data: 'Desc',
+                    data: 'Value',
                 },
                 {    data: "ID",
                     "render": function(data, type, row) {
@@ -56,8 +46,8 @@
                         var dropdownHtml = '<div class="dropdown">' +
                                             '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item" onclick="editMidtrans('+ id +')">Edit</a>' +
-                                                '<a class="dropdown-item" onclick="deleteMidtrans('+ id +')">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="editPayment('+ id +')">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deletePayment('+ id +')">Delete</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;

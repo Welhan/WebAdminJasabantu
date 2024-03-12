@@ -1,27 +1,23 @@
-<div class="modal fade" id="modalDeleteMidtrans" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDeleteConfig" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete Midtrans</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Delete Config</h5>
             </div>
             <form action="" id="formSubmit">
                 <div class="modal-body">
                     @csrf
 
-                    <input type="hidden" id="ID" name="ID" value="{{ $midtrans['ID'] }}">
+                    <input type="hidden" id="ID" name="ID" value="{{ $config['ID'] }}">
 
                     <table class="table table-bordered">
                         <thead>
                             <th>Config</th>
-                            <th>Value 1</th>
-                            <th>Value 2</th>
-                            <th>Type</th>
+                            <th>Value</th>
                         </thead>
                         <tbody>
-                            <th>{{ $midtrans['Config'] }}</th>
-                            <th>{{ $midtrans['Value_1'] }}</th>
-                            <th>{{ $midtrans['Value_2'] }}</th>
-                            <th>{{ $midtrans['Type'] }}</th>
+                            <th>{{ $config['Config'] }}</th>
+                            <th>{{ $config['Value'] }}</th>
                         </tbody>
                     </table>
                 </div>
@@ -37,7 +33,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/midtrans/delete',
+            url: '/web-config/delete',
             data: $('#formSubmit').serialize(),
             beforeSend: function() {
                 $('#btnProcess').attr('disabled', 'disabled');
@@ -45,8 +41,8 @@
             },
             success: function(response) {
                 if(response.success){
-                    $('#modalDeleteMidtrans').modal('hide');
-                    getDataMidtrans();
+                    $('#modalDeleteConfig').modal('hide');
+                    getDataConfig();
                 }
             },
             error: function(response) {

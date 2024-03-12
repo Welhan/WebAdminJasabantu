@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class MidtransModel extends Model
+class PaymentModel extends Model
 {
-    protected $table = "midtrans";
+    protected $table = "payment_method";
 
     protected $guarded = ["ID"];
 
-    public static function getMidtrans($start, $length)
+    public static function getPayment($start, $length)
     {
         $sql = DB::table((new self())->getTable())
             ->select()->offset($start)->limit($length)
@@ -20,28 +20,28 @@ class MidtransModel extends Model
         return $sql;
     }
 
-    public static function summaryMidtrans()
+    public static function summaryPayment()
     {
         $sql = DB::table((new self())->getTable())
             ->count('ID');
         return $sql;
     }
 
-    public static function saveMidtrans($data)
+    public static function savePayment($data)
     {
         $sql = DB::table((new self())->getTable())
             ->insert($data);
         return $sql;
     }
 
-    public static function updateMidtrans($id, $data)
+    public static function updatePayment($id, $data)
     {
         $sql = DB::table((new self())->getTable())
             ->where('ID', $id)->update($data);
         return $sql;
     }
 
-    public static function deleteMidtrans($id)
+    public static function deletePayment($id)
     {
         $sql = DB::table((new self())->getTable())
             ->where('ID', $id)->delete();
