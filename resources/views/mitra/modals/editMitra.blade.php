@@ -7,27 +7,30 @@
             <form id="formSubmit">
                 @csrf
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label>UniqueID</label>
-                        <input type="text" class="form-control" id="Uniqueid" name="Uniqueid" readonly
-                            value="{{ $mitra['UniqueID'] }}">
-                    </div>
+                    <input type="hidden" class="form-control" id="Uniqueid" name="Uniqueid" readonly value="{{ $id }}">
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" value="{{ $mitra['Name'] }}">
+                        <input type="text" class="form-control" id="Name" name="Name" value="{{ $mitra['Name'] }}"
+                            required>
+                        <div id="errName" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputEmail3">Email address</label>
-                        <input type="email" class="form-control" id="Email" name="Email" value="{{ $mitra['Email'] }}">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="Email" id="Email" value="{{ $mitra['Email'] }}"
+                            required>
+                        <div id="errEmail" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputPassword4">Phone</label>
-                        <input type="text" class="form-control" id="Phone" name="Phone" value="{{ $mitra['Phone'] }}">
+                        <label>Phone</label>
+                        <input type="text" class="form-control" name="Phone" id="Phone" value="{{ $mitra['Phone'] }}"
+                            required>
+                        <div id="errPhone" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
                         <input type="text" class="form-control" id="Address" name="Address"
-                            value="{{ $mitra['Address'] }}">
+                            value="{{ $mitra['Address'] }}" required>
+                        <div id="errAddress" class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -38,6 +41,62 @@
     </div>
 </div>
 <script>
+    // $("#checkEmail").on("click", function(e){
+    //     var email = $('#Email').val();
+    //     var id = $('#Uniqueid').val();
+    //     e.preventDefault()
+    //     $.ajax({
+    //         url : "/mitra-management/checkEmail",
+    //         type : "GET",
+    //         dataType : "JSON",
+    //         data : {
+    //             email,
+    //             id
+    //         },
+    //         success: function(response){
+    //             console.log(response)
+    //             if (response.status === 'failed') {
+    //                 $('#Email').addClass('is-invalid');
+    //                 $('#errEmail').html(response.message);
+    //             } else {
+    //                 $('#Email').removeClass('is-invalid');
+    //                 $('#errEmail').html(response.message);
+    //             }
+    //         },
+    //         error : function(xhr, res, error){
+    //             alert(error)
+    //         }
+    //     })
+    // })
+
+    // $("#checkPhone").on("click", function(e){
+    //     var phone = $('#Phone').val();
+    //     var id = String($('#Uniqueid').val());
+    //     e.preventDefault()
+    //     $.ajax({
+    //         url : "/mitra-management/checkPhone",
+    //         type : "GET",
+    //         dataType : "JSON",
+    //         data : {
+    //             phone,
+    //             id
+    //         },
+    //         success: function(response){
+    //             console.log(response)
+    //             if (response.status === 'failed') {
+    //                 $('#Phone').addClass('is-invalid');
+    //                 $('#errPhone').html(response.message);
+    //             } else {
+    //                 $('#Phone').removeClass('is-invalid');
+    //                 $('#errPhone').html(response.message);
+    //             }
+    //         },
+    //         error : function(xhr, res, error){
+    //             alert(error)
+    //         }
+    //     })
+    // })
+    
     $('#formSubmit').submit(function(e){
         e.preventDefault();
         $.ajax({
@@ -49,12 +108,14 @@
                 $('#btnProcess').html('<i class="fa fa-spin fa-spinner"></i>');
             },
             success: function(response) {
+                console.log(response)
                 if(response.success){
                     $('#modalEditMitra').modal('hide');
                     getDataMitra();
                 }
             },
             error: function(response) {
+                console.log(response)
                 $('#btnProcess').removeAttr('disabled');
                 $('#btnProcess').html('Save');
 

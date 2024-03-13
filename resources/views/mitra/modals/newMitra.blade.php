@@ -127,6 +127,9 @@
                 if(response.success){
                     $('#modalNewMitra').modal('hide');
                     getDataMitra();
+                }else{
+                     $('#modalNewMitra').modal('hide');
+                    getDataMitra();
                 }
             },
             error: function(response) {

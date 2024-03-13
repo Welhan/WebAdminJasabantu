@@ -1,25 +1,23 @@
-<div class="modal fade" id="modalDeleteMitra" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDeleteConfig" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete Mitra</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Delete Config</h5>
             </div>
             <form action="" id="formSubmit">
                 <div class="modal-body">
                     @csrf
 
-                    <input type="hidden" class="form-control" id="Uniqueid" name="Uniqueid" readonly value="{{ $id }}">
+                    <input type="hidden" id="ID" name="ID" value="{{ $config['ID'] }}">
 
                     <table class="table table-bordered">
                         <thead>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
+                            <th>Config</th>
+                            <th>Value</th>
                         </thead>
                         <tbody>
-                            <th>{{ $mitra['Name'] }}</th>
-                            <th>{{ $mitra['Email'] }}</th>
-                            <th>{{ $mitra['Phone'] }}</th>
+                            <th>{{ $config['Config'] }}</th>
+                            <th>{{ $config['Value'] }}</th>
                         </tbody>
                     </table>
                 </div>
@@ -35,7 +33,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/mitra-management/delete',
+            url: '/web-config/delete',
             data: $('#formSubmit').serialize(),
             beforeSend: function() {
                 $('#btnProcess').attr('disabled', 'disabled');
@@ -43,8 +41,8 @@
             },
             success: function(response) {
                 if(response.success){
-                    $('#modalDeleteMitra').modal('hide');
-                    getDataMitra();
+                    $('#modalDeleteConfig').modal('hide');
+                    getDataConfig();
                 }
             },
             error: function(response) {

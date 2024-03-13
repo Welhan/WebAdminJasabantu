@@ -7,11 +7,9 @@
 <table class="table table-bordered data-table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Created Date</th>
+            <th>Payment Type</th>
+            <th>Value</th>
+            <th>Active</th>
             <th width="100px">Action</th>
         </tr>
     </thead>
@@ -29,44 +27,39 @@
             lengthChange : false,
             searching : false,
             ajax: {
-                url: "/mitra-management/tableData",
-                data: {
-                    email: '<?= $email; ?>',
-                    phone: '<?= $phone; ?>',
-                    name: '<?= $name; ?>',
-                },
+                url: "/payment-method/tableData",
                 type: "GET",
                 dataType: "json"
             },
-            columns: [{
-                    data: 'Name',
+            columns: [
+                {
+                    data: 'Payment_type',
                 },
                 {
-                    data: 'Email',
+                    data: 'Value',
                 },
                 {
-                    data: 'Phone',
-                },
-                {
-                    data: 'Address',
-                },
-                {    data: "CreatedDate",
                     "render": function(data, type, row) {
-                        if (row['CreatedDate']) {
-                            let Date = moment(row['CreatedDate'])
-                            return Date.locale('id').format('D MMM YYYY, HH:mm:ss');
+                        let allowF = '<input type="checkbox" class="btn-check" disabled ';
+                        if (row['ActiveF'] == 1) {
+                            allowF += 'checked';
+                        } else {
+                            allowF += '';
                         }
-                        return '';
+                        allowF += '>';
+                        allowF += '</div>';
+
+                        return allowF;
                     }
                 },
-                {    data: "UniqueID",
+                {    data: "ID",
                     "render": function(data, type, row) {
-                        uniqueid = row['UniqueID'].toString()
+                        id = row['ID']
                         var dropdownHtml = '<div class="dropdown">' +
                                             '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item" onclick="editMitra('+ uniqueid +')">Edit</a>' +
-                                                '<a class="dropdown-item" onclick="deleteMitra('+ uniqueid +')">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="editPayment('+ id +')">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deletePayment('+ id +')">Delete</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;

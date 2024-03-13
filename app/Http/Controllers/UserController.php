@@ -34,6 +34,8 @@ class UserController extends Controller
         if ($request->ajax()) {
             $tabledata = view('user.tableData')->render();
             return response()->json($tabledata);
+        } else {
+            return redirect('user-management');
         }
     }
 
@@ -48,7 +50,8 @@ class UserController extends Controller
 
             $client = new Client();
             try {
-                $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getUser', [
+                $url = env('URL_API') . '/api/getUser';
+                $response = $client->get($url, [
                     'curl' => [
                         CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
                         CURLOPT_RETURNTRANSFER => true
@@ -97,7 +100,7 @@ class UserController extends Controller
                 return response()->json($msg, 200);
             }
         } else {
-            return redirect()->route('/user-management');
+            return redirect('user-management');
         }
     }
 
@@ -107,7 +110,7 @@ class UserController extends Controller
             $view = view('user/modals/editUser')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('/user-management');
+            return redirect('user-management');
         }
     }
 
@@ -117,7 +120,7 @@ class UserController extends Controller
             $view = view('user/modals/deleteUser')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('/user-management');
+            return redirect('user-management');
         }
     }
 }

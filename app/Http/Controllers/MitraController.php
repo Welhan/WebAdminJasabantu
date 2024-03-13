@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\MitraModel;
 use App\Models\UserModel;
-use App\Models\SystabModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,18 +14,6 @@ class MitraController extends Controller
 {
     function index()
     {
-        // $client = new Client();
-        // $response = $client->get('https://bkgkgngv-5000.asse.devtunnels.ms/api/getMitra', [
-        //     'curl' => [
-        //         CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
-        //         CURLOPT_RETURNTRANSFER => true
-        //     ]
-        // ]);
-
-        // $bodyContent = $response->getBody()->getContents();
-        // $dataArray = json_decode($bodyContent, true);
-        // return $response;
-
         $data = [
             'title' => 'Mitra Management',
         ];
@@ -36,7 +23,14 @@ class MitraController extends Controller
     public function getData(Request $request)
     {
         if ($request->ajax()) {
-            $tabledata = view('mitra.tableData')->render();
+
+            $data = [
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'name' => $request->name,
+            ];
+
+            $tabledata = view('mitra.tableData', $data)->render();
             return response()->json($tabledata);
         }
     }
@@ -46,23 +40,78 @@ class MitraController extends Controller
         if ($request->ajax()) {
 
             $param['draw'] = isset($_REQUEST['draw']) ? $_REQUEST['draw'] : '';
-            $keySearch = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : '';
-            $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : '';
-            $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : '';
+            // $keySearch = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : '';
+            $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
+            $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : 0;
 
-            $mitra =  MitraModel::getMitra($start, $length);
-            $summary =  MitraModel::summaryMitra();
+            $email = $request->email ? $request->email : "";
+            $phone = $request->phone ? $request->phone  : "";
+            $name = $request->name ? $request->name : "";
 
+            $client = new Client();
+            try {
+                $params = [
+                    'start' => $start,
+                    'length' => $length,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'name' => $name,
+                ];
+                $token = session()->get('token');
+                $url = env('URL_API_MITRA') . '/api/getMitra';
+                $response = $client->post($url, [
+                    'curl' => [
+                        CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                        CURLOPT_RETURNTRANSFER => true
+                    ],
+                    'json' => $params,
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json', // Specify expected response format
+                        'Authorization' => "Bearer $token",
+                    ],
+                ]);
 
-            $msg = [
-                'draw' => intval($param['draw']),
-                'recordsTotal' => $summary,
-                'recordsFiltered' => $summary,
-                'data' => $mitra
-            ];
+                if ($response) {
+                    if ($response->getStatusCode() === 200) {
+                        $bodyContent = $response->getBody()->getContents();
+                        $dataArray = json_decode($bodyContent, true);
+                        $datamitra = $dataArray['data'];
+                        $summary = $dataArray['summary'];
+
+                        $msg = [
+                            'draw' => intval($param['draw']),
+                            'recordsTotal' => $summary,
+                            'recordsFiltered' => $summary,
+                            'data' => $datamitra
+                        ];
+                    } else {
+                        $msg = [
+                            'draw' => intval($param['draw']),
+                            'recordsTotal' => 0,
+                            'recordsFiltered' => 0,
+                            'data' => []
+                        ];
+                    }
+                } else {
+                    $msg = [
+                        'draw' => intval($param['draw']),
+                        'recordsTotal' => 0,
+                        'recordsFiltered' => 0,
+                        'data' => []
+                    ];
+                }
+            } catch (Exception $e) {
+                $msg = [
+                    'draw' => intval($param['draw']),
+                    'recordsTotal' => 0,
+                    'recordsFiltered' => 0,
+                    'data' => []
+                ];
+            }
             return response()->json($msg, 200);
         } else {
-            return redirect()->route('/mitra-management');
+            return redirect('mitra-management');
         }
     }
 
@@ -76,7 +125,7 @@ class MitraController extends Controller
 
             return response()->json($msg, 200);
         } else {
-            return redirect()->route('/mitra-management');
+            return redirect('mitra-management');
         }
     }
 
@@ -89,7 +138,7 @@ class MitraController extends Controller
 
             return response()->json($data, 200);
         } else {
-            return redirect()->route('/mitra-management');
+            return redirect('mitra-management');
         }
     }
 
@@ -99,7 +148,7 @@ class MitraController extends Controller
             $view = view('mitra/modals/newMitra')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('mitra-management');
+            return redirect('mitra-management');
         }
     }
 
@@ -109,54 +158,124 @@ class MitraController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'Name' => 'required|string|max:255',
-                'Email' => 'required|email|unique:user',
-                'Phone' => 'required|unique:user',
+                'Email' => 'required|email',
+                'Phone' => 'required|numeric',
                 'Address' => 'required',
                 'Pin' => 'required',
             ]);
 
+            $name = $request->Name;
+            $email = $request->Email;
+            $phone = $request->Phone;
+            $address = $request->Address;
+            $pin = $request->Pin;
+
+            $rotemail = rot15(env('DELIMITTER_ADMIN') . $email);
+            $tokenemail = session()->get('token') . base64_encode($rotemail);
+            $urlemail = env('URL_API_MITRA') . '/api/checkEmailMitra';
+            $client = new Client();
+            $response = $client->post($urlemail, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $tokenemail",
+                ],
+            ]);
+
+            $bodyemail = $response->getBody()->getContents();
+            $remail = json_decode($bodyemail, true);
+
+            $rotphone = rot15(env('DELIMITTER_ADMIN') . $phone);
+            $token = session()->get('token') . base64_encode($rotphone);
+            $urlphone = env('URL_API_MITRA') . '/api/checkPhoneMitra';
+            $client = new Client();
+            $response = $client->post($urlphone, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+
+            $bodyphone = $response->getBody()->getContents();
+            $rphone = json_decode($bodyphone, true);
+
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
-            } else {
-                $counter = SystabModel::getDataCounter()[0]->Value;
-
-                if ($counter == NULL) {
-                    $counter = 1;
-                } else {
-                    $counter = (int)$counter + 1;
-                }
-                $prefix = SystabModel::getDataPrefix()[0]->Value;
-                $number = $prefix . mt_rand(10000, 99999) . $counter;
-                $uniqueid = $request->User ?? $number;
+            } else if ($remail['status'] == 'failed' && $rphone['status'] == 'failed') {
                 $data = [
-                    'UniqueID' => $uniqueid,
-                    'Name' => $request->Name,
-                    'Email' => $request->Email,
-                    'Phone' => $request->Phone,
-                    'Pin' => $request->Pin,
-                    'Address' => $request->Address,
-                    'CreatedDate' => date('Y-m-d H-i-s'),
+                    'Email' => $remail['message'],
+                    'Phone' => $rphone['message'],
+                ];
+                return response()->json(['errors' => $data], 422);
+            } else if ($remail['status'] == 'failed') {
+                $data = [
+                    'Email' => $remail['message'],
+                ];
+                return response()->json(['errors' => $data], 422);
+            } else if ($rphone['status'] == 'failed') {
+                $data = [
+                    'Phone' => $rphone['message'],
+                ];
+                return response()->json(['errors' => $data], 422);
+            } else {
+                $url = env('URL_API_MITRA') . 'api/registerMitra';
+
+                $data = [
+                    env('DELIMITTER_ADMIN') . $name,
+                    $email,
+                    $phone,
+                    $address,
+                    $pin,
                 ];
 
-                $process = MitraModel::saveMitra($data);
+                $datamitra = implode(env('DELIMITTER_ADMIN'), $data);
+                $rot15 = rot15($datamitra);
+                $mitra = session()->get('token') . base64_encode($rot15);
 
-                if ($process) {
-                    Session::flash('message', 'Mitra Created Successfully');
-                    Session::flash('alert', 'alert-success');
-                    $msg = [
-                        'success' => 'Mitra created successfully.'
-                    ];
-                } else {
-                    Session::flash([
-                        'message' => 'Create Mitra Failed',
-                        'alert' => 'alert-danger'
+                try {
+                    $client = new Client();
+                    $response = $client->post($url, [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Accept' => 'application/json', // Specify expected response format
+                            'Authorization' => "Bearer $mitra",
+                        ],
                     ]);
-                    $msg = [
-                        'failed' => 'Create Mitra Failed'
-                    ];
+
+                    $responseBody = $response->getBody()->getContents();
+                    $message = json_decode($responseBody, true);
+
+                    if ($response->getStatusCode() === 200) {
+                        Session::flash('message', $message['message']);
+                        Session::flash('alert', 'alert-success');
+                        $msg = [
+                            'success' => $message['message']
+                        ];
+                    } else {
+                        Session::flash('message', $message['message']);
+                        Session::flash('alert', 'alert-danger');
+                        $msg = [
+                            'failed' => $message['message']
+                        ];
+                    }
+                } catch (Exception $e) {
+                    // Handle network errors or other exceptions
+                    echo "Error: " . $e->getMessage();
                 }
+
                 return response()->json($msg);
             }
+        } else {
+            return redirect('mitra-management');
         }
     }
 
@@ -164,17 +283,110 @@ class MitraController extends Controller
     {
         if ($request->ajax()) {
             $id = $request->id;
+            $rot15 = rot15(env('DELIMITTER_ADMIN') . $id);
+            $token = session()->get('token') . base64_encode($rot15);
+            $url = env('URL_API_MITRA') . '/api/getDataMitra';
+            $client = new Client();
+            $response = $client->post($url, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+
+            $bodyContent = $response->getBody()->getContents();
+            $dataArray = json_decode($bodyContent, true);
+            $mitra = $dataArray['data'];
+
             $data = [
-                'mitra' => MitraModel::findOrFail($id)
+                'mitra' => $mitra,
+                'id' => $id,
             ];
             $view = view('mitra/modals/editMitra', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('mitra-management');
+            return redirect('mitra-management');
         }
     }
 
-    public function update(Request $request)
+    function checkEmail(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $email = $request->email;
+            $id = $request->id;
+
+            $rot15 = rot15(env('DELIMITTER_ADMIN') . $email . env('DELIMITTER_ADMIN') . $id);
+            $token = session()->get('token') . base64_encode($rot15);
+            $url = env('URL_API_MITRA') . '/api/checkEmailMitra';
+            $client = new Client();
+            $response = $client->post($url, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+
+            $bodyContent = $response->getBody()->getContents();
+            $dataemail = json_decode($bodyContent, true);
+            $msg = [
+                'status' => $dataemail['status'],
+                'message' => $dataemail['message']
+            ];
+
+            return response()->json($msg, 200);
+        } else {
+            return redirect('mitra-management');
+        }
+    }
+
+    function checkPhone(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $phone = $request->phone;
+            $id = $request->id;
+
+            $rot15 = rot15(env('DELIMITTER_ADMIN') . $phone . env('DELIMITTER_ADMIN') . $id);
+            $token = session()->get('token') . base64_encode($rot15);
+            $url = env('URL_API_MITRA') . '/api/checkPhoneMitra';
+            $client = new Client();
+            $response = $client->post($url, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+
+            $bodyContent = $response->getBody()->getContents();
+            $dataphone = json_decode($bodyContent, true);
+            $msg = [
+                'status' => $dataphone['status'],
+                'message' => $dataphone['message']
+            ];
+
+            return response()->json($msg, 200);
+        } else {
+            return redirect('mitra-management');
+        }
+    }
+
+    function update(Request $request)
     {
         if ($request->ajax()) {
 
@@ -186,35 +398,119 @@ class MitraController extends Controller
             ]);
 
             $uniqueid = $request->Uniqueid;
+            $name = $request->Name;
+            $email = $request->Email;
+            $phone = $request->Phone;
+            $address = $request->Address;
+
+
+            $rotemail = rot15(env('DELIMITTER_ADMIN') . $email . env('DELIMITTER_ADMIN') . $uniqueid);
+            $tokenemail = session()->get('token') . base64_encode($rotemail);
+            $urlemail = env('URL_API_MITRA') . '/api/checkEmailMitra';
+            $client = new Client();
+            $response = $client->post($urlemail, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $tokenemail",
+                ],
+            ]);
+
+            $bodyemail = $response->getBody()->getContents();
+            $remail = json_decode($bodyemail, true);
+
+            $rotphone = rot15(env('DELIMITTER_ADMIN') . $phone . env('DELIMITTER_ADMIN') . $uniqueid);
+            $token = session()->get('token') . base64_encode($rotphone);
+            $urlphone = env('URL_API_MITRA') . '/api/checkPhoneMitra';
+            $client = new Client();
+            $response = $client->post($urlphone, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+
+            $bodyphone = $response->getBody()->getContents();
+            $rphone = json_decode($bodyphone, true);
+
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
-            } else {
+            } else if ($remail['status'] == 'failed' && $rphone['status'] == 'failed') {
                 $data = [
-                    'Name' => $request->Name,
-                    'Email' => $request->Email,
-                    'Phone' => $request->Phone,
-                    'Pin' => $request->Pin,
-                    'Address' => $request->Address,
-                    'CreatedDate' => date('Y-m-d H-i-s'),
+                    'Email' => $remail['message'],
+                    'Phone' => $rphone['message'],
+                ];
+                return response()->json(['errors' => $data], 422);
+            } else if ($remail['status'] == 'failed') {
+                $data = [
+                    'Email' => $remail['message'],
+                ];
+                return response()->json(['errors' => $data], 422);
+            } else if ($rphone['status'] == 'failed') {
+                $data = [
+                    'Phone' => $rphone['message'],
+                ];
+                return response()->json(['errors' => $data], 422);
+            } else {
+                $url = env('URL_API_MITRA') . '/api/updateDataMitra';
+
+                $data = [
+                    env('DELIMITTER_ADMIN') . $uniqueid,
+                    $name,
+                    $email,
+                    $phone,
+                    $address,
                 ];
 
-                $process = MitraModel::updateMitra($uniqueid, $data);
-                if ($process) {
-                    Session::flash('message', 'Mitra Updated Successfully');
-                    Session::flash('alert', 'alert-success');
-                    $msg = [
-                        'success' => 'Mitra created successfully.'
-                    ];
-                } else {
-                    Session::flash('message', 'Mitra Update Failed');
-                    Session::flash('alert', 'alert-danger');
-                    $msg = [
-                        'failed' => 'Mitra Update Failed'
-                    ];
+                $datamitra = implode(env('DELIMITTER_ADMIN'), $data);
+                $rot15 = rot15($datamitra);
+                $mitra = session()->get('token') . base64_encode($rot15);
+
+                try {
+                    $client = new Client();
+                    $response = $client->post($url, [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Accept' => 'application/json', // Specify expected response format
+                            'Authorization' => "Bearer $mitra",
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $message = json_decode($responseBody, true);
+
+                    if ($response->getStatusCode() === 200) {
+                        Session::flash('message', $message['message']);
+                        Session::flash('alert', 'alert-success');
+                        $msg = [
+                            'success' => $message['message']
+                        ];
+                    } else {
+                        Session::flash('message', $message['message']);
+                        Session::flash('alert', 'alert-danger');
+                        $msg = [
+                            'failed' => $message['message']
+                        ];
+                    }
+                } catch (Exception $e) {
+                    // Handle network errors or other exceptions
+                    echo "Error: " . $e->getMessage();
                 }
+
                 return response()->json($msg);
             }
+        } else {
+            return redirect('mitra-management');
         }
     }
 
@@ -222,14 +518,34 @@ class MitraController extends Controller
     {
         if ($request->ajax()) {
             $id = $request->id;
+            $rot15 = rot15(env('DELIMITTER_ADMIN') . $id);
+            $token = session()->get('token') . base64_encode($rot15);
+            $url = env('URL_API_MITRA') . '/api/getDataMitra';
+            $client = new Client();
+            $response = $client->post($url, [
+                'curl' => [
+                    CURLOPT_SSL_VERIFYPEER => false, // Disable for self-signed certificates (if needed)
+                    CURLOPT_RETURNTRANSFER => true
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json', // Specify expected response format
+                    'Authorization' => "Bearer $token",
+                ],
+            ]);
+
+            $bodyContent = $response->getBody()->getContents();
+            $dataArray = json_decode($bodyContent, true);
+            $mitra = $dataArray['data'];
             $data = [
-                'mitra' => MitraModel::findOrFail($id)
+                'mitra' => $mitra,
+                'id' => $id
             ];
 
             $view = view('mitra/modals/deleteMitra', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect()->route('mitra-management');
+            return redirect('mitra-management');
         }
     }
 
@@ -237,22 +553,46 @@ class MitraController extends Controller
     {
         if ($request->ajax()) {
             $uniqueid = $request->Uniqueid;
-            $process = MitraModel::deleteMitra($uniqueid);
+            $url = env('URL_API_MITRA') . '/api/deleteMitra';
 
-            if ($process) {
-                Session::flash('message', 'Data Mitra Has Been Deleted!');
-                Session::flash('alert', 'alert-success');
-                $msg = [
-                    'success' => 'Data Mitra Has Been Deleted!'
-                ];
-            } else {
-                Session::flash('message', 'Delete Mitra Failed');
-                Session::flash('alert', 'alert-danger');
-                $msg = [
-                    'failed' => 'Delete Mitra Failed'
-                ];
+            $datamitra = env('DELIMITTER_ADMIN') . $uniqueid;
+            $rot15 = rot15($datamitra);
+            $mitra = session()->get('token') . base64_encode($rot15);
+
+            try {
+                $client = new Client();
+                $response = $client->post($url, [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json', // Specify expected response format
+                        'Authorization' => "Bearer $mitra",
+                    ],
+                ]);
+
+                $responseBody = $response->getBody()->getContents();
+                $message = json_decode($responseBody, true);
+
+                if ($response->getStatusCode() === 200) {
+                    Session::flash('message', $message['message']);
+                    Session::flash('alert', 'alert-success');
+                    $msg = [
+                        'success' => $message['message']
+                    ];
+                } else {
+                    Session::flash('message', $message['message']);
+                    Session::flash('alert', 'alert-danger');
+                    $msg = [
+                        'failed' => $message['message']
+                    ];
+                }
+            } catch (Exception $e) {
+                // Handle network errors or other exceptions
+                echo "Error: " . $e->getMessage();
             }
+
             return response()->json($msg);
+        } else {
+            return redirect('mitra-management');
         }
     }
 }

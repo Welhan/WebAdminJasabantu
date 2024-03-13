@@ -5,34 +5,10 @@
     <div class="col">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h2 class="text-primary">Mitra Management</h2>
-                <button class="btn btn-primary" type="button" id="newMitra">New Mitra</button>
+                <h2 class="text-primary">Payment Method</h2>
+                <button class="btn btn-primary" type="button" id="newPayment">New Payment</button>
             </div>
             <div class="card-body">
-                <div class="formFilter mb-3">
-                    <form>
-                        <div class="row">
-                            <div class="col">
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="text" class="form-control" id="email">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" id="phone">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="mb-3">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name">
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary" id="btnFilter">Filter</button>
-                        <button type="button" class="btn btn-danger" id="btnReset">Reset Filter</button>
-                    </form>
-                </div>
                 <div id="loader" style="display: none">
                     <div class="d-flex justify-content-center">
                         <button class="btn btn-primary btn-rounded" type="button" disabled>
@@ -50,17 +26,17 @@
 @endsection
 @section('script')
 <script>
-    $("#newMitra").on("click", function(e){
+    $("#newPayment").on("click", function(e){
         e.preventDefault()
         $.ajax({
-            url : "/mitra-management/newMitra",
+            url : "/payment-method/newPayment",
             type : "GET",
             dataType : "JSON",
             success: function(response){
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalNewMitra").modal('show')
+                    $("#modalNewPayment").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -69,16 +45,10 @@
         })
     })
 
-    function getDataMitra() {
-        let email = document.querySelector('#email');
-        let phone = document.querySelector('#phone');
-        let name = document.querySelector('#name');
+    function getDataPayment() {
         $.ajax({
-            url: '/mitra-management/getData',
+            url: '/payment-method/getData',
             data: {
-                email : email.value,
-                phone : phone.value,
-                name : name.value,
             },
             beforeSend: function() {
                 $('#tableData').hide();
@@ -96,9 +66,9 @@
     }
 
         
-    function editMitra(id) {
+    function editPayment(id) {
         $.ajax({
-            url: '/mitra-management/editMitra',
+            url: '/payment-method/editPayment',
             data: {
                 id
             },
@@ -106,7 +76,7 @@
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalEditMitra").modal('show')
+                    $("#modalEditPayment").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -115,9 +85,9 @@
         });
     }
 
-    function deleteMitra(id) {
+    function deletePayment(id) {
         $.ajax({
-            url: '/mitra-management/deleteMitra',
+            url: '/payment-method/deletePayment',
             data: {
                 id
             },
@@ -125,7 +95,7 @@
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalDeleteMitra").modal('show')
+                    $("#modalDeletePayment").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -135,27 +105,13 @@
     }
 
     $(document).ready(function () {
-        getDataMitra();
+        getDataPayment();
 
         $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
         });
-
-        $('#btnFilter').on('click', function(e) {
-            e.preventDefault();
-            getDataMitra();
-        })
-
-        $('#btnReset').on('click', function(e) {
-            $('#email').val('');
-            $('#name').val('');
-            $('#phone').val('');
-
-            e.preventDefault();
-            getDataMitra();
-        })
     });
 </script>
 @endsection
