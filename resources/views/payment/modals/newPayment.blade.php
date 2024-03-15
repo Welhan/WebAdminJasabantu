@@ -24,6 +24,11 @@
                         <input type="text" class="form-control" id="Value" name="Value" placeholder="Value">
                         <div id="errValue" class="invalid-feedback"></div>
                     </div>
+                    <div class="form-group">
+                        <label>Expired</label>
+                        <input type="text" class="form-control" id="Expired" name="Expired" placeholder="Expired Time">
+                        <div id="errExpired" class="invalid-feedback"></div>
+                    </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" id="btnProcess">Submit</button>
                     </div>
@@ -66,6 +71,14 @@
                 } else {
                     $('#Value').removeClass('is-invalid');
                     $('#errValue').html('')
+                }
+
+                if (response.responseJSON.errors.Expired) {
+                    $('#Expired').addClass('is-invalid');
+                    $('#errExpired').html(response.responseJSON.errors.Expired);
+                } else {
+                    $('#Expired').removeClass('is-invalid');
+                    $('#errExpired').html('')
                 }
                 
             }

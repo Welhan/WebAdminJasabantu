@@ -9,7 +9,6 @@ use App\Models\ConfigModel;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use PSpell\Config;
 
 class PaymentController extends Controller
 {
@@ -76,10 +75,12 @@ class PaymentController extends Controller
             $validator = Validator::make($request->all(), [
                 'Type' => 'required',
                 'Value' => 'required',
+                'Expired' => 'required',
             ]);
 
             $type = $request->Type;
             $value = $request->Value;
+            $expired = $request->Expired;
 
 
             if ($validator->fails()) {
@@ -90,6 +91,7 @@ class PaymentController extends Controller
                     'Payment_type' => $type,
                     'Value' => $value,
                     'ActiveF' => 1,
+                    'Expired' => $expired,
                     'CDate' => date('Y-m-d H-i-s'),
                     'CUserID' => 1,
                 ];
@@ -144,11 +146,13 @@ class PaymentController extends Controller
             $validator = Validator::make($request->all(), [
                 'Type' => 'required',
                 'Value' => 'required',
+                'Expired' => 'required',
             ]);
 
             $type = $request->Type;
             $value = $request->Value;
             $activeF = $request->ActiveF;
+            $expired = $request->Expired;
 
             $id = $request->ID;
 
@@ -160,6 +164,7 @@ class PaymentController extends Controller
                     'Payment_type' => $type,
                     'Value' => $value,
                     'ActiveF' => is_null($activeF) ? '0' : '1',
+                    'Expired' => $expired,
                     'Last_Date' => date('Y-m-d H-i-s'),
                     'Last_User' => 1,
                 ];

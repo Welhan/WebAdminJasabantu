@@ -28,6 +28,13 @@
                         <div id="errValue" class="invalid-feedback"></div>
                     </div>
 
+                    <div class="form-group">
+                        <label>Expired</label>
+                        <input type="text" class="form-control" id="Expired" name="Expired" placeholder="Expired Time"
+                            value="{{ $payment['Expired'] }}">
+                        <div id="errExpired" class="invalid-feedback"></div>
+                    </div>
+
                     <div class="form-check">
                         <div class="col-sm-10">
                             <input class="form-check-input" type="checkbox" id="cbxEditActiveF" name="ActiveF"
