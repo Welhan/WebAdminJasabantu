@@ -7,6 +7,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,7 +76,17 @@ Route::prefix('/payment-method')->group(function () {
     Route::post('/delete', [PaymentController::class, 'delete']);
 });
 
-
+Route::prefix('/category')->group(function () {
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/getData', [CategoryController::class, 'getData']);
+    Route::get('/tableData', [CategoryController::class, 'tableData']);
+    Route::get('/newCategory', [CategoryController::class, 'newCategory']);
+    Route::get('/editCategory', [CategoryController::class, 'editCategory']);
+    Route::get('/deleteCategory', [CategoryController::class, 'deleteCategory']);
+    Route::post('/store', [CategoryController::class, 'store']);
+    Route::post('/update', [CategoryController::class, 'update']);
+    Route::post('/delete', [CategoryController::class, 'delete']);
+});
 
 Route::get('/login', [AuthController::class, 'index']);
 Route::post('/login', [AuthController::class, 'login']);

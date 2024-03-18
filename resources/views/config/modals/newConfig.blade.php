@@ -42,6 +42,7 @@
                 }
             },
             error: function(response) {
+                console.log(response)
                 $('#btnProcess').removeAttr('disabled');
                 $('#btnProcess').html('Save');
 
