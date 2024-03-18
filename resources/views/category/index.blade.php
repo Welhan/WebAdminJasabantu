@@ -95,7 +95,7 @@
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalDeleteConfig").modal('show')
+                    $("#modalDeleteCategory").modal('show')
                 }
             },
             error : function(xhr, res, error){

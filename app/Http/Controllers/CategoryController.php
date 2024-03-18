@@ -68,10 +68,9 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         if ($request->ajax()) {
-
             $validator = Validator::make($request->all(), [
                 'category' => 'required|string|max:255',
-                'icon' => 'image|mimes:jpeg,jpg,png|max:2048',
+                'icon' => 'required|image|mimes:jpeg,jpg,png|max:2048',
             ]);
 
             $category = $request->category;
@@ -80,7 +79,7 @@ class CategoryController extends Controller
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
             } else {
 
-                if ($request->file()) {
+                if ($request->file('icon')) {
                     $image = $request->file('icon');
                     $filename = $image->storeAs('images', $image->hashName());
                 }
@@ -145,9 +144,9 @@ class CategoryController extends Controller
             ]);
 
             $category = $request->category;
-            $activeF = $request->ActiveF;
+            $activeF = $request->activeF;
 
-            $id = $request->ID;
+            $id = $request->id;
             $post = CategoryModel::findOrFail($id);
 
 
@@ -155,14 +154,13 @@ class CategoryController extends Controller
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
             } else {
 
-                if ($request->hasFile('image')) {
-
+                if ($request->hasFile('icon')) {
                     //upload new image
-                    $image = $request->file('image');
+                    $image = $request->file('icon');
                     $filename = $image->storeAs('images', $image->hashName());
 
                     //delete old image
-                    Storage::delete($post->image);
+                    Storage::delete($post->Icon);
 
                     //update post with new image
                     $data = [
@@ -182,6 +180,7 @@ class CategoryController extends Controller
                 }
 
                 $process = CategoryModel::updateCategory($id, $data);
+
                 if ($process) {
                     Session::flash('message', 'Category Berhasil Diupdate');
                     Session::flash('alert', 'alert-success');
@@ -224,8 +223,8 @@ class CategoryController extends Controller
         if ($request->ajax()) {
             $id = $request->ID;
             $post = CategoryModel::findOrFail($id);
-            Storage::delete($post->image);
-            $process = CategoryModel::deleteCatenewCategory($id);
+            Storage::delete($post->Icon);
+            $process = CategoryModel::deleteCategory($id);
 
             if ($process) {
                 Session::flash('message', 'Data CatenewCategory Berhasil Dihapus');

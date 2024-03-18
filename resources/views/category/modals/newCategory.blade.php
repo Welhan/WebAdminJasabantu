@@ -4,7 +4,8 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">New Category</h5>
             </div>
-            <form autocomplete="off" id="formSubmit" enctype="multipart/form-data">
+            <form autocomplete="off" id="formSubmit" enctype="multipart/form-data" action="category/store"
+                method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
@@ -40,22 +41,25 @@
     $(document).ready(function () {
         $('#formSubmit').submit(function(e){
             e.preventDefault();
+            var formData = new FormData(this);
             $.ajax({
                 type: 'POST',
-                url: '/category/store',
-                data: $('#formSubmit').serialize(),
+                url: $(this).attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
                 beforeSend: function() {
                     $('#btnProcess').attr('disabled', 'disabled');
                     $('#btnProcess').html('<i class="fa fa-spin fa-spinner"></i>');
                 },
                 success: function(response) {
+                console.log(response)
                     if(response.success){
-                        $('#modalNewConfig').modal('hide');
+                        $('#modalNewCategory').modal('hide');
                         getDataCategory();
                     }
                 },
                 error: function(response) {
-                    console.log(response)
                     $('#btnProcess').removeAttr('disabled');
                     $('#btnProcess').html('Save');
 
@@ -77,7 +81,8 @@
                     
                 }
             })
+        })
     })
 
-    })
+    
 </script>
