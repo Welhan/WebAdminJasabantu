@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ConfigController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\MitraController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,6 +88,24 @@ Route::prefix('/category')->group(function () {
     Route::post('/store', [CategoryController::class, 'store']);
     Route::post('/update', [CategoryController::class, 'update']);
     Route::post('/delete', [CategoryController::class, 'delete']);
+});
+
+Route::prefix('/banner')->group(function () {
+    Route::get('/', [BannerController::class, 'index']);
+    Route::get('/getData', [BannerController::class, 'getData']);
+    Route::get('/tableData', [BannerController::class, 'tableData']);
+    Route::get('/newBanner', [BannerController::class, 'newBanner']);
+    Route::get('/editBanner', [BannerController::class, 'editBanner']);
+    Route::get('/deleteBanner', [BannerController::class, 'deleteBanner']);
+    Route::post('/store', [BannerController::class, 'store']);
+    Route::post('/update', [BannerController::class, 'update']);
+    Route::post('/delete', [BannerController::class, 'delete']);
+});
+
+Route::prefix('/service')->group(function () {
+    Route::get('/', [ServiceController::class, 'index']);
+    Route::get('/getData', [ServiceController::class, 'getData']);
+    Route::get('/tableData', [ServiceController::class, 'tableData']);
 });
 
 Route::get('/login', [AuthController::class, 'index']);
