@@ -41,7 +41,17 @@
                     data: 'Name',
                 },
                 {   
-                    data: 'Image',
+                    "render": function(data, type, row) {
+                        let src = window.location.origin + '/storage/' + row['Image'];
+
+                        if (row['Image']) {
+                            img = '<img src=' + src + ' class="img-fluid" style="height: 80px">';
+                        } else {
+                            img = '';
+                        }
+                        return img;
+                    }
+
                 },
                 {
                     "render": function(data, type, row) {
