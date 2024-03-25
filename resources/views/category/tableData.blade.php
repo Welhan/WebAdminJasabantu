@@ -7,7 +7,7 @@
 <table class="table table-bordered data-table">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>No</th>
             <th>Category</th>
             <th>Icon</th>
             <th>Active</th>
@@ -35,7 +35,7 @@
                 dataType: "json"
             },
             columns: [{
-                    data: 'ID',
+                    data: 'Number',
                 },
                 {
                     data: 'Category',

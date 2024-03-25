@@ -19,7 +19,8 @@ class CategoryModel extends Model
     public static function getCategory($start, $length)
     {
         $sql = DB::table((new self())->getTable())
-            ->select()->offset($start)->limit($length)
+            ->select(DB::raw('*,ROW_NUMBER() OVER (ORDER BY ID DESC) AS Number'))
+            ->offset($start)->limit($length)
             ->get();
         return $sql;
     }
