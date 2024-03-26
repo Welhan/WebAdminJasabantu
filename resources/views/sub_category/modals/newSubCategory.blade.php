@@ -1,20 +1,31 @@
-<div class="modal fade" id="modalNewCategory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalNewSubCategory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">New Category</h5>
+                <h5 class="modal-title" id="exampleModalLabel">New Sub Category</h5>
             </div>
-            <form autocomplete="off" id="formSubmit" enctype="multipart/form-data" action="category/store"
+            <form autocomplete="off" id="formSubmit" enctype="multipart/form-data" action="sub-category/store"
                 method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="category">Category</label>
-                        <input type="text" class="form-control" id="category" name="category"
-                            placeholder="Nama Category">
+                        <select class="form-control" aria-label="category" id="category" name="category">
+                            <option value="">Select Category</option>
+                            @foreach($category as $c)
+                            <option value="{{ $c['ID'] }}">
+                                {{ $c['Category'] }}
+                            </option>
+                            @endforeach
+                        </select>
                         <div id="errCategory" class="invalid-feedback"></div>
                     </div>
-                    <div id="errType" class="invalid-feedback"></div>
+                    <div class="form-group">
+                        <label for="sub_category">Sub Category</label>
+                        <input type="text" class="form-control" id="sub_category" name="sub_category"
+                            placeholder="Nama Category">
+                        <div id="errSubCategory" class="invalid-feedback"></div>
+                    </div>
                     <div class="form-group">
                         <label for="icon">Icon</label>
                         <input type="file" class="form-control" id="icon" name="icon" placeholder="Icon"
@@ -56,8 +67,8 @@
                 success: function(response) {
                 console.log(response)
                     if(response.success){
-                        $('#modalNewCategory').modal('hide');
-                        getDataCategory();
+                        $('#modalNewSubCategory').modal('hide');
+                        getDataSubCategory();
                     }
                 },
                 error: function(response) {
@@ -70,6 +81,14 @@
                     } else {
                         $('#category').removeClass('is-invalid');
                         $('#errCategory').html('')
+                    }
+
+                    if (response.responseJSON.errors.sub_category) {
+                        $('#sub_category').addClass('is-invalid');
+                        $('#errSubCategory').html(response.responseJSON.errors.sub_category);
+                    } else {
+                        $('#sub_category').removeClass('is-invalid');
+                        $('#errSubCategory').html('')
                     }
 
                     if (response.responseJSON.errors.icon) {
@@ -86,4 +105,4 @@
     })
 
     
-</script>
+</script>s

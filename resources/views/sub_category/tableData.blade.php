@@ -8,6 +8,7 @@
         <tr>
             <th>No</th>
             <th>Category</th>
+            <th>Sub Category</th>
             <th>Icon</th>
             <th>Active</th>
             <th width="100px">Action</th>
@@ -28,7 +29,7 @@
             lengthChange : false,
             searching : false,
             ajax: {
-                url: "/category/tableData",
+                url: "/sub-category/tableData",
                 data: {
                 },
                 type: "GET",
@@ -39,6 +40,9 @@
                 },
                 {
                     data: 'Category',
+                },
+                {
+                    data: 'Sub_Category',
                 },
                 {
                     "render": function(data, type, row) {
@@ -68,7 +72,7 @@
                 },
                 {    data: "ID",
                     "render": function(data, type, row) {
-                        id = row['ID']
+                        id = row['ID'];
                         var dropdownHtml = '<div class="dropdown">' +
                                             '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +

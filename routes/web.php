@@ -10,6 +10,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SubCategoryController;
+use App\Models\SubCategoryModel;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +90,18 @@ Route::prefix('/category')->group(function () {
     Route::post('/store', [CategoryController::class, 'store']);
     Route::post('/update', [CategoryController::class, 'update']);
     Route::post('/delete', [CategoryController::class, 'delete']);
+});
+
+Route::prefix('/sub-category')->group(function () {
+    Route::get('/', [SubCategoryController::class, 'index']);
+    Route::get('/getData', [SubCategoryController::class, 'getData']);
+    Route::get('/tableData', [SubCategoryController::class, 'tableData']);
+    Route::get('/newSubCategory', [SubCategoryController::class, 'newSubCategory']);
+    Route::get('/editSubCategory', [SubCategoryController::class, 'editSubCategory']);
+    Route::get('/deleteSubCategory', [SubCategoryController::class, 'deleteSubCategory']);
+    Route::post('/store', [SubCategoryController::class, 'store']);
+    Route::post('/update', [SubCategoryController::class, 'update']);
+    Route::post('/delete', [SubCategoryController::class, 'delete']);
 });
 
 Route::prefix('/banner')->group(function () {

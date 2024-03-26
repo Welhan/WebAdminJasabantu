@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoryModel;
 use Exception;
 use Illuminate\Http\Request;
-use App\Models\CategoryModel;
+use App\Models\SubCategoryModel;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryController extends Controller
+class SubCategoryController extends Controller
 {
     function index()
     {
         $data = [
-            'title' => 'Category',
+            'title' => 'Sub Category',
         ];
-        return view("category.index", $data);
+        return view("sub_category.index", $data);
     }
 
     public function getData(Request $request)
     {
         if ($request->ajax()) {
 
-            $tabledata = view('category.tableData')->render();
+            $tabledata = view('sub_category.tableData')->render();
             return response()->json($tabledata);
         }
     }
@@ -39,29 +40,33 @@ class CategoryController extends Controller
             $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : 0;
 
 
-            $category = CategoryModel::getCategory($start, $length);
-            $summary =  CategoryModel::summaryCategory();
+            $subcategory = SubCategoryModel::getSubCategory($start, $length);
+            $summary =  SubCategoryModel::summarySubCategory();
 
             $msg = [
                 'draw' => intval($param['draw']),
                 'recordsTotal' => $summary,
                 'recordsFiltered' => $summary,
-                'data' => $category
+                'data' => $subcategory
             ];
 
             return response()->json($msg, 200);
         } else {
-            return redirect('category');
+            return redirect('sub-category');
         }
     }
 
-    function newCategory(Request $request)
+    function newSubCategory(Request $request)
     {
         if ($request->ajax()) {
-            $view = view('category/modals/newCategory')->render();
+            $data = [
+                'category' => CategoryModel::where('ActiveF', '1')->get()
+            ];
+
+            $view = view('sub_category/modals/newSubCategory', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('category');
+            return redirect('sub-category');
         }
     }
 
@@ -69,11 +74,13 @@ class CategoryController extends Controller
     {
         if ($request->ajax()) {
             $validator = Validator::make($request->all(), [
-                'category' => 'required|string|max:255',
+                'category' => 'required',
+                'sub_category' => 'required',
                 'icon' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
             ]);
 
             $category = $request->category;
+            $sub_category = $request->sub_category;
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()->toArray()], 422); // Return validation errors with 422 status code
@@ -81,14 +88,15 @@ class CategoryController extends Controller
 
                 if ($request->file('icon')) {
                     $image = $request->file('icon');
-                    $filename = $image->storeAs('category', $image->hashName());
+                    $filename = $image->storeAs('subcategory', $image->hashName());
                 } else {
                     $filename = '';
                 }
 
 
                 $data = [
-                    'Category' => $category,
+                    'ID_Category' => $category,
+                    'Sub_Category' => $sub_category,
                     'Icon' => $filename,
                     'ActiveF' => 1,
                     'CDate' => date('Y-m-d H-i-s'),
@@ -96,19 +104,19 @@ class CategoryController extends Controller
                 ];
 
 
-                $process = CategoryModel::saveCategory($data);
+                $process = SubCategoryModel::saveSubCategory($data);
 
                 if ($process) {
-                    Session::flash('message', 'Category Berhasil Dibuat');
+                    Session::flash('message', 'Sub Category Berhasil Dibuat');
                     Session::flash('alert', 'alert-success');
                     $msg = [
-                        'success' => 'Category Berhasil Dibuat'
+                        'success' => 'Sub Category Berhasil Dibuat'
                     ];
                 } else {
-                    Session::flash('message', 'Category Gagal Dibuat');
+                    Session::flash('message', 'Sub Category Gagal Dibuat');
                     Session::flash('alert', 'alert-danger');
                     $msg = [
-                        'failed' => 'Category Gagal Dibuat'
+                        'failed' => 'Sub Category Gagal Dibuat'
                     ];
                 }
 
@@ -116,23 +124,24 @@ class CategoryController extends Controller
                 return response()->json($msg);
             }
         } else {
-            return redirect('category');
+            return redirect('sub-category');
         }
     }
 
-    function editCategory(Request $request)
+    function editSubCategory(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->id;
 
-            $category = CategoryModel::findOrFail($id);
+            $subcategory = SubCategoryModel::findOrFail($id);
             $data = [
-                'category' => $category
+                'category' => CategoryModel::where('ActiveF', '1')->get(),
+                'subcategory' => $subcategory,
             ];
-            $view = view('category/modals/editCategory', $data)->render();
+            $view = view('sub_category/modals/editSubCategory', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('category');
+            return redirect('sub-category');
         }
     }
 
@@ -141,15 +150,17 @@ class CategoryController extends Controller
         if ($request->ajax()) {
 
             $validator = Validator::make($request->all(), [
-                'category' => 'required|string|max:255',
+                'category' => 'required',
+                'sub_category' => 'required',
                 'icon' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
             ]);
 
             $category = $request->category;
+            $sub_category = $request->sub_category;
             $activeF = $request->activeF;
 
             $id = $request->id;
-            $post = CategoryModel::findOrFail($id);
+            $post = SubCategoryModel::findOrFail($id);
 
 
             if ($validator->fails()) {
@@ -159,7 +170,7 @@ class CategoryController extends Controller
                 if ($request->hasFile('icon')) {
                     //upload new image
                     $image = $request->file('icon');
-                    $filename = $image->storeAs('category', $image->hashName());
+                    $filename = $image->storeAs('subcategory', $image->hashName());
 
                     //delete old image
                     if ($post->Icon <> '') {
@@ -168,7 +179,8 @@ class CategoryController extends Controller
 
                     //update post with new image
                     $data = [
-                        'Category' => $category,
+                        'ID_Category' => $category,
+                        'Sub_Category' => $sub_category,
                         'Icon' => $filename,
                         'ActiveF' => is_null($activeF) ? '0' : '1',
                         'Last_Date' => date('Y-m-d H-i-s'),
@@ -176,26 +188,27 @@ class CategoryController extends Controller
                     ];
                 } else {
                     $data = [
-                        'Category' => $category,
+                        'ID_Category' => $category,
+                        'Sub_Category' => $sub_category,
                         'ActiveF' => is_null($activeF) ? '0' : '1',
                         'Last_Date' => date('Y-m-d H-i-s'),
                         'Last_User' => 1,
                     ];
                 }
 
-                $process = CategoryModel::updateCategory($id, $data);
+                $process = SubCategoryModel::updateSubCategory($id, $data);
 
                 if ($process) {
-                    Session::flash('message', 'Category Berhasil Diupdate');
+                    Session::flash('message', 'Sub Category Berhasil Diupdate');
                     Session::flash('alert', 'alert-success');
                     $msg = [
-                        'success' => 'Category Berhasil Diupdate'
+                        'success' => 'Sub Category Berhasil Diupdate'
                     ];
                 } else {
-                    Session::flash('message', 'Category Gagal Diupdate');
+                    Session::flash('message', 'Sub Category Gagal Diupdate');
                     Session::flash('alert', 'alert-danger');
                     $msg = [
-                        'failed' => 'Category Gagal Diupdate'
+                        'failed' => 'Sub Category Gagal Diupdate'
                     ];
                 }
 
@@ -206,19 +219,19 @@ class CategoryController extends Controller
         }
     }
 
-    function deleteCategory(Request $request)
+    function deleteSubCategory(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->id;
-            $category = CategoryModel::findOrFail($id);
+            $subcategory = SubCategoryModel::getDataSubCategory($id);
             $data = [
-                'category' => $category
+                'subcategory' => $subcategory
             ];
 
-            $view = view('category/modals/deleteCategory', $data)->render();
+            $view = view('sub_category/modals/deleteSubCategory', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('category');
+            return redirect('sub-category');
         }
     }
 
@@ -226,31 +239,31 @@ class CategoryController extends Controller
     {
         if ($request->ajax()) {
             $id = $request->ID;
-            $post = CategoryModel::findOrFail($id);
+            $post = SubCategoryModel::findOrFail($id);
 
             if ($post->Icon <> '') {
                 Storage::delete($post->Icon);
             }
 
-            $process = CategoryModel::deleteCategory($id);
+            $process = SubCategoryModel::deleteSubCategory($id);
 
             if ($process) {
-                Session::flash('message', 'Data Category Berhasil Dihapus');
+                Session::flash('message', 'Data Sub Category Berhasil Dihapus');
                 Session::flash('alert', 'alert-success');
                 $msg = [
-                    'success' => 'Data Category Berhasil Dihapus'
+                    'success' => 'Data Sub Category Berhasil Dihapus'
                 ];
             } else {
-                Session::flash('message', 'Data Category Gagal Dihapus');
+                Session::flash('message', 'Data Sub Category Gagal Dihapus');
                 Session::flash('alert', 'alert-danger');
                 $msg = [
-                    'failed' => 'Data Category Gagal Dihapus'
+                    'failed' => 'Data Sub Category Gagal Dihapus'
                 ];
             }
 
             return response()->json($msg);
         } else {
-            return redirect('category');
+            return redirect('sub-category');
         }
     }
 }

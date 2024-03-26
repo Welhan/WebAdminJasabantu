@@ -10,20 +10,24 @@
                 <div class="modal-body">
                     <input type="hidden" id="id" name="id" readonly value="{{ $category['ID'] }}">
                     <div class="form-group">
-                        <label>Category</label>
+                        <label for="category">Category</label>
                         <input type="text" class="form-control" id="category" name="category"
                             placeholder="Nama Category" value="{{ $category['Category'] }}">
                         <div id="errCategory" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label>Icon</label>
+                        <label for="icon">Icon</label>
                         <input type="file" class="form-control" id="icon" name="icon" placeholder="Icon"
                             onchange="preview()">
                         <div id="errIcon" class="invalid-feedback"></div>
                     </div>
                     <div class="mb-3">
-                        <img src="{{ asset('storage/'.$category['Icon']) }}" style="width: 80px" id="frame"
-                            class="img-fluid">
+                        @if ($category['Icon'] <> '')
+                            <img src="{{ asset('storage/'.$category['Icon']) }}" style="width: 80px" id="frame"
+                                class="img-fluid">
+                            @else
+                            <img src="" style="width: 80px" id="frame" class="img-fluid" style="display: none">
+                            @endif
                     </div>
                     <div class="form-check">
                         <div class="col-sm-10">

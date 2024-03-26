@@ -9,13 +9,13 @@
                 <div class="modal-body">
                     <input type="hidden" id="id" name="id" readonly value="{{ $banner['ID'] }}">
                     <div class="form-group">
-                        <label>Name</label>
+                        <label for="name">Name</label>
                         <input type="text" class="form-control" id="name" name="name" placeholder="Name"
                             value="{{ $banner['Name'] }}">
                         <div id="errName" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label>Image</label>
+                        <label for="image">Image</label>
                         <input type="file" class="form-control" id="image" name="image" placeholder="Image"
                             onchange="preview()">
                         <div id="errImage" class="invalid-feedback"></div>
