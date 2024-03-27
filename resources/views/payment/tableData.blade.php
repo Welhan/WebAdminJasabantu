@@ -10,6 +10,7 @@
             <th>Payment Type</th>
             <th>Value</th>
             <th>Active</th>
+            <th>Expired</th>
             <th width="100px">Action</th>
         </tr>
     </thead>
@@ -51,6 +52,9 @@
 
                         return allowF;
                     }
+                },
+                {
+                    data: 'Expired',
                 },
                 {    data: "ID",
                     "render": function(data, type, row) {
