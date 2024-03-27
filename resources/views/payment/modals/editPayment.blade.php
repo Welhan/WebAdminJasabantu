@@ -10,7 +10,7 @@
                     <input type="hidden" id="ID" name="ID" readonly value="{{ $payment['ID'] }}">
                     <div class="form-group">
                         <label>Payment Type</label>
-                        <select class="form-select" aria-label="payment_type" id="Type" name="Type">
+                        <select class="form-control" aria-label="payment_type" id="Type" name="Type">
                             <option value="">Select Payment Type</option>
                             @foreach($payment_type as $pt)
                             <option value="{{ $pt['Value'] }}" {{($pt['Value']==$payment['Payment_type'] ? 'selected'
@@ -26,6 +26,13 @@
                         <input type="text" class="form-control" id="Value" name="Value" placeholder="Value"
                             value="{{ $payment['Value'] }}">
                         <div id="errValue" class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Expired</label>
+                        <input type="text" class="form-control" id="Expired" name="Expired" placeholder="Expired Time"
+                            value="{{ $payment['Expired'] }}">
+                        <div id="errExpired" class="invalid-feedback"></div>
                     </div>
 
                     <div class="form-check">

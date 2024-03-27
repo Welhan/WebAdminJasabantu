@@ -9,13 +9,13 @@
                 <div class="modal-body">
                     <input type="hidden" id="ID" name="ID" readonly value="{{ $config['ID'] }}">
                     <div class="form-group">
-                        <label>Config</label>
+                        <label for="Config">Config</label>
                         <input type="text" class="form-control" id="Config" name="Config" placeholder="Nama Config"
                             value="{{ $config['Config'] }}">
                         <div id="errConfig" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label>Value</label>
+                        <label for="Value">Value</label>
                         <input type="text" class="form-control" id="Value" name="Value" placeholder="Value"
                             value="{{ $config['Value'] }}">
                         <div id="errValue" class="invalid-feedback"></div>

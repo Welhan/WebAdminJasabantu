@@ -38,7 +38,7 @@
                                 @csrf
                                 <div class="form-group">
                                     <input type="email" class="form-control form-control-lg" d="Email" name="Email"
-                                        placeholder="Email">
+                                        placeholder="Email" autofocus>
                                 </div>
                                 <div class="form-group">
                                     <input type="password" class="form-control form-control-lg" id="Password"

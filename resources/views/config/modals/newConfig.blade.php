@@ -8,12 +8,12 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Config</label>
+                        <label for="Config">Config</label>
                         <input type="text" class="form-control" id="Config" name="Config" placeholder="Nama Config">
                         <div id="errConfig" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label>Value</label>
+                        <label for="Value">Value</label>
                         <input type="text" class="form-control" id="Value" name="Value" placeholder="Value">
                         <div id="errValue" class="invalid-feedback"></div>
                     </div>
@@ -42,6 +42,7 @@
                 }
             },
             error: function(response) {
+                console.log(response)
                 $('#btnProcess').removeAttr('disabled');
                 $('#btnProcess').html('Save');
 
