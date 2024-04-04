@@ -69,12 +69,12 @@ class ConfigController extends Controller
         if ($request->ajax()) {
 
             $validator = Validator::make($request->all(), [
-                'Config' => 'required|string|max:255',
-                'Value' => 'required',
+                'config' => 'required|string|max:255',
+                'value' => 'required',
             ]);
 
-            $config = $request->Config;
-            $value = $request->Value;
+            $config = $request->config;
+            $value = $request->value;
 
 
             if ($validator->fails()) {
@@ -135,12 +135,12 @@ class ConfigController extends Controller
         if ($request->ajax()) {
 
             $validator = Validator::make($request->all(), [
-                'Config' => 'required|string|max:255',
-                'Value' => 'required',
+                'config' => 'required|string|max:255',
+                'value' => 'required',
             ]);
 
-            $config = $request->Config;
-            $value = $request->Value;
+            $config = $request->config;
+            $value = $request->value;
             $activeF = $request->ActiveF;
 
             $id = $request->ID;

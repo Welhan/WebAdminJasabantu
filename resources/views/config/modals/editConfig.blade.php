@@ -9,14 +9,14 @@
                 <div class="modal-body">
                     <input type="hidden" id="ID" name="ID" readonly value="{{ $config['ID'] }}">
                     <div class="form-group">
-                        <label for="Config">Config</label>
-                        <input type="text" class="form-control" id="Config" name="Config" placeholder="Nama Config"
+                        <label for="config">Config</label>
+                        <input type="text" class="form-control" id="config" name="config" placeholder="Nama Config"
                             value="{{ $config['Config'] }}">
                         <div id="errConfig" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label for="Value">Value</label>
-                        <input type="text" class="form-control" id="Value" name="Value" placeholder="Value"
+                        <label for="value">Value</label>
+                        <input type="text" class="form-control" id="value" name="value" placeholder="Value"
                             value="{{ $config['Value'] }}">
                         <div id="errValue" class="invalid-feedback"></div>
                     </div>
@@ -57,21 +57,21 @@
             },
             error: function(response) {
                 $('#btnProcess').removeAttr('disabled');
-                $('#btnProcess').html('Save');
+                $('#btnProcess').html('Submit');
 
-                if (response.responseJSON.errors.Config) {
-                    $('#Config').addClass('is-invalid');
-                    $('#errConfig').html(response.responseJSON.errors.Config);
+                if (response.responseJSON.errors.config) {
+                    $('#config').addClass('is-invalid');
+                    $('#errConfig').html(response.responseJSON.errors.config);
                 } else {
-                    $('#Config').removeClass('is-invalid');
+                    $('#config').removeClass('is-invalid');
                     $('#errConfig').html('')
                 }
 
-                if (response.responseJSON.errors.Value) {
-                    $('#Value').addClass('is-invalid');
-                    $('#errValue').html(response.responseJSON.errors.Value);
+                if (response.responseJSON.errors.value) {
+                    $('#value').addClass('is-invalid');
+                    $('#errValue').html(response.responseJSON.errors.value);
                 } else {
-                    $('#Value').removeClass('is-invalid');
+                    $('#value').removeClass('is-invalid');
                     $('#errValue').html('')
                 }
 
