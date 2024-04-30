@@ -7,10 +7,11 @@
 <table class="table table-bordered data-table">
     <thead>
         <tr>
-            <th>UniqueID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Address</th>
+            <th>Created Date</th>
             <th width="100px">Action</th>
         </tr>
     </thead>
@@ -28,14 +29,16 @@
             lengthChange : false,
             searching : false,
             ajax: {
-                url: "/user-management/tableData",
+                url: "/merchant-management/tableData",
+                data: {
+                    email: '<?= $email; ?>',
+                    phone: '<?= $phone; ?>',
+                    name: '<?= $name; ?>',
+                },
                 type: "GET",
                 dataType: "json"
             },
             columns: [{
-                    data: 'UniqueID',
-                },
-                {
                     data: 'Name',
                 },
                 {
@@ -44,13 +47,26 @@
                 {
                     data: 'Phone',
                 },
-                {   data: null,
+                {
+                    data: 'Address',
+                },
+                {    data: "CreatedDate",
                     "render": function(data, type, row) {
+                        if (row['CreatedDate']) {
+                            let Date = moment(row['CreatedDate'])
+                            return Date.locale('id').format('D MMM YYYY, HH:mm:ss');
+                        }
+                        return '';
+                    }
+                },
+                {    data: "UniqueID",
+                    "render": function(data, type, row) {
+                        uniqueid = row['UniqueID'].toString()
                         var dropdownHtml = '<div class="dropdown">' +
-                                            '<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
+                                            '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>' +
                                             '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">' +
-                                                '<a class="dropdown-item" onclick="editUser()">Edit</a>' +
-                                                '<a class="dropdown-item" onclick="deleteUser()">Delete</a>' +
+                                                '<a class="dropdown-item" onclick="editMerchant('+ uniqueid +')">Edit</a>' +
+                                                '<a class="dropdown-item" onclick="deleteMerchant('+ uniqueid +')">Delete</a>' +
                                             '</div>' +
                                         '</div>';
                         return dropdownHtml;

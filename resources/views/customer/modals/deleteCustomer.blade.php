@@ -1,8 +1,8 @@
-<div class="modal fade" id="modalDeleteUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDeleteCustomer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Delete Customer</h5>
             </div>
             <form action="" id="formSubmit">
                 <div class="modal-body">

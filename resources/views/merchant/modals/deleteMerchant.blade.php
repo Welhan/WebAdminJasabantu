@@ -1,8 +1,8 @@
-<div class="modal fade" id="modalDeleteMitra" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDeleteMerchant" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete Mitra</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Delete Merchant</h5>
             </div>
             <form action="" id="formSubmit">
                 <div class="modal-body">
@@ -17,9 +17,9 @@
                             <th>Phone</th>
                         </thead>
                         <tbody>
-                            <th>{{ $mitra['Name'] }}</th>
-                            <th>{{ $mitra['Email'] }}</th>
-                            <th>{{ $mitra['Phone'] }}</th>
+                            <th>{{ $merchant['Name'] }}</th>
+                            <th>{{ $merchant['Email'] }}</th>
+                            <th>{{ $merchant['Phone'] }}</th>
                         </tbody>
                     </table>
                 </div>
@@ -35,7 +35,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/mitra-management/delete',
+            url: '/merchant-management/delete',
             data: $('#formSubmit').serialize(),
             beforeSend: function() {
                 $('#btnProcess').attr('disabled', 'disabled');
@@ -43,8 +43,8 @@
             },
             success: function(response) {
                 if(response.success){
-                    $('#modalDeleteMitra').modal('hide');
-                    getDataMitra();
+                    $('#modalDeleteMerchant').modal('hide');
+                    getDataMerchant();
                 }
             },
             error: function(response) {

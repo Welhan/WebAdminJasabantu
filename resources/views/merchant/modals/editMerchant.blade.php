@@ -1,8 +1,8 @@
-<div class="modal fade" id="modalEditMitra" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalEditMerchant" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Mitra</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Edit Merchant</h5>
             </div>
             <form id="formSubmit">
                 @csrf
@@ -10,26 +10,26 @@
                     <input type="hidden" class="form-control" id="Uniqueid" name="Uniqueid" readonly value="{{ $id }}">
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" value="{{ $mitra['Name'] }}"
+                        <input type="text" class="form-control" id="Name" name="Name" value="{{ $merchant['Name'] }}"
                             required>
                         <div id="errName" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="text" class="form-control" name="Email" id="Email" value="{{ $mitra['Email'] }}"
+                        <input type="text" class="form-control" name="Email" id="Email" value="{{ $merchant['Email'] }}"
                             required>
                         <div id="errEmail" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
-                        <input type="text" class="form-control" name="Phone" id="Phone" value="{{ $mitra['Phone'] }}"
+                        <input type="text" class="form-control" name="Phone" id="Phone" value="{{ $merchant['Phone'] }}"
                             required>
                         <div id="errPhone" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
                         <input type="text" class="form-control" id="Address" name="Address"
-                            value="{{ $mitra['Address'] }}" required>
+                            value="{{ $merchant['Address'] }}" required>
                         <div id="errAddress" class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
     //     var id = $('#Uniqueid').val();
     //     e.preventDefault()
     //     $.ajax({
-    //         url : "/mitra-management/checkEmail",
+    //         url : "/merchant-management/checkEmail",
     //         type : "GET",
     //         dataType : "JSON",
     //         data : {
@@ -74,7 +74,7 @@
     //     var id = String($('#Uniqueid').val());
     //     e.preventDefault()
     //     $.ajax({
-    //         url : "/mitra-management/checkPhone",
+    //         url : "/merchant-management/checkPhone",
     //         type : "GET",
     //         dataType : "JSON",
     //         data : {
@@ -101,7 +101,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/mitra-management/update',
+            url: '/merchant-management/update',
             data: $('#formSubmit').serialize(),
             beforeSend: function() {
                 $('#btnProcess').attr('disabled', 'disabled');
@@ -110,8 +110,8 @@
             success: function(response) {
                 console.log(response)
                 if(response.success){
-                    $('#modalEditMitra').modal('hide');
-                    getDataMitra();
+                    $('#modalEditMerchant').modal('hide');
+                    getDataMerchant();
                 }
             },
             error: function(response) {

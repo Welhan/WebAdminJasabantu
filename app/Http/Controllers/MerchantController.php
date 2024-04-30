@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MitraModel;
+use App\Models\MerchantModel;
 use App\Models\UserModel;
 use Exception;
 use Illuminate\Http\Request;
@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Client;
 
-class MitraController extends Controller
+class MerchantController extends Controller
 {
     function index()
     {
         $data = [
-            'title' => 'Mitra Management',
+            'title' => 'Merchant Management',
         ];
-        return view("mitra.index", $data);
+        return view("merchant.index", $data);
     }
 
     public function getData(Request $request)
@@ -30,7 +30,7 @@ class MitraController extends Controller
                 'name' => $request->name,
             ];
 
-            $tabledata = view('mitra.tableData', $data)->render();
+            $tabledata = view('merchant.tableData', $data)->render();
             return response()->json($tabledata);
         }
     }
@@ -111,7 +111,7 @@ class MitraController extends Controller
             }
             return response()->json($msg, 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -125,7 +125,7 @@ class MitraController extends Controller
 
             return response()->json($msg, 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -138,17 +138,17 @@ class MitraController extends Controller
 
             return response()->json($data, 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
-    function newMitra(Request $request)
+    function newMerchant(Request $request)
     {
         if ($request->ajax()) {
-            $view = view('mitra/modals/newMitra')->render();
+            $view = view('merchant/modals/newMerchant')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -275,11 +275,11 @@ class MitraController extends Controller
                 return response()->json($msg);
             }
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
-    function editMitra(Request $request)
+    function editMerchant(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->id;
@@ -307,10 +307,10 @@ class MitraController extends Controller
                 'mitra' => $mitra,
                 'id' => $id,
             ];
-            $view = view('mitra/modals/editMitra', $data)->render();
+            $view = view('merchant/modals/editMerchant', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -346,7 +346,7 @@ class MitraController extends Controller
 
             return response()->json($msg, 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -382,7 +382,7 @@ class MitraController extends Controller
 
             return response()->json($msg, 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -510,11 +510,11 @@ class MitraController extends Controller
                 return response()->json($msg);
             }
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
-    function deleteMitra(Request $request)
+    function deleteMerchant(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->id;
@@ -542,10 +542,10 @@ class MitraController extends Controller
                 'id' => $id
             ];
 
-            $view = view('mitra/modals/deleteMitra', $data)->render();
+            $view = view('merchant/modals/deleteMerchant', $data)->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 
@@ -592,7 +592,7 @@ class MitraController extends Controller
 
             return response()->json($msg);
         } else {
-            return redirect('mitra-management');
+            return redirect('merchant-management');
         }
     }
 }

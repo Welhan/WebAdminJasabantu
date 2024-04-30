@@ -5,8 +5,8 @@
     <div class="col">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h2 class="text-primary">Mitra Management</h2>
-                <button class="btn btn-primary" type="button" id="newMitra">New Mitra</button>
+                <h2 class="text-primary">Merchant</h2>
+                <button class="btn btn-primary" type="button" id="newMerchant">New Merchant</button>
             </div>
             <div class="card-body">
                 <div class="formFilter mb-3">
@@ -50,17 +50,17 @@
 @endsection
 @section('script')
 <script>
-    $("#newMitra").on("click", function(e){
+    $("#newMerchant").on("click", function(e){
         e.preventDefault()
         $.ajax({
-            url : "/mitra-management/newMitra",
+            url : "/merchant-management/newMerchant",
             type : "GET",
             dataType : "JSON",
             success: function(response){
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalNewMitra").modal('show')
+                    $("#modalNewMerchant").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -69,12 +69,12 @@
         })
     })
 
-    function getDataMitra() {
+    function getDataMerchant() {
         let email = document.querySelector('#email');
         let phone = document.querySelector('#phone');
         let name = document.querySelector('#name');
         $.ajax({
-            url: '/mitra-management/getData',
+            url: '/merchant-management/getData',
             data: {
                 email : email.value,
                 phone : phone.value,
@@ -96,9 +96,9 @@
     }
 
         
-    function editMitra(id) {
+    function editMerchant(id) {
         $.ajax({
-            url: '/mitra-management/editMitra',
+            url: '/merchant-management/editMerchant',
             data: {
                 id
             },
@@ -106,7 +106,7 @@
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalEditMitra").modal('show')
+                    $("#modalEditMerchant").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -115,9 +115,9 @@
         });
     }
 
-    function deleteMitra(id) {
+    function deleteMerchant(id) {
         $.ajax({
-            url: '/mitra-management/deleteMitra',
+            url: '/merchant-management/deleteMerchant',
             data: {
                 id
             },
@@ -125,7 +125,7 @@
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalDeleteMitra").modal('show')
+                    $("#modalDeleteMerchant").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -135,7 +135,7 @@
     }
 
     $(document).ready(function () {
-        getDataMitra();
+        getDataMerchant();
 
         $.ajaxSetup({
           headers: {
@@ -145,7 +145,7 @@
 
         $('#btnFilter').on('click', function(e) {
             e.preventDefault();
-            getDataMitra();
+            getDataMerchant();
         })
 
         $('#btnReset').on('click', function(e) {
@@ -154,7 +154,7 @@
             $('#phone').val('');
 
             e.preventDefault();
-            getDataMitra();
+            getDataMerchant();
         })
     });
 </script>

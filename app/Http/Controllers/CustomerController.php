@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Client;
 use Exception;
 
-class UserController extends Controller
+class CustomerController extends Controller
 {
     function index()
     {
@@ -24,18 +24,18 @@ class UserController extends Controller
         // return $dataArray;
 
         $data = [
-            'title' => 'User Management',
+            'title' => 'Customer Management',
         ];
-        return view("user.index", $data);
+        return view("customer.index", $data);
     }
 
     public function getData(Request $request)
     {
         if ($request->ajax()) {
-            $tabledata = view('user.tableData')->render();
+            $tabledata = view('customer.tableData')->render();
             return response()->json($tabledata);
         } else {
-            return redirect('user-management');
+            return redirect('customer-management');
         }
     }
 
@@ -100,27 +100,27 @@ class UserController extends Controller
                 return response()->json($msg, 200);
             }
         } else {
-            return redirect('user-management');
+            return redirect('customer-management');
         }
     }
 
-    function editUser(Request $request)
+    function editCustomer(Request $request)
     {
         if ($request->ajax()) {
-            $view = view('user/modals/editUser')->render();
+            $view = view('customer/modals/editCustomer')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('user-management');
+            return redirect('customer-management');
         }
     }
 
-    function deleteUser(Request $request)
+    function deleteCustomer(Request $request)
     {
         if ($request->ajax()) {
-            $view = view('user/modals/deleteUser')->render();
+            $view = view('customer/modals/deleteCustomer')->render();
             return response()->json(['view' => $view], 200);
         } else {
-            return redirect('user-management');
+            return redirect('customer-management');
         }
     }
 }

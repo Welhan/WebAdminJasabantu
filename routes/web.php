@@ -1,17 +1,17 @@
 <?php
 
+use App\Models\SubCategoryModel;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ConfigController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\IndexController;
-use App\Http\Controllers\MitraController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\SubCategoryController;
-use App\Models\SubCategoryModel;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,29 +26,29 @@ use App\Models\SubCategoryModel;
 
 Route::get('/', [indexController::class, 'index']);
 
-Route::prefix('/mitra-management')->group(function () {
-    Route::get('/', [MitraController::class, 'index']);
-    Route::get('/getData', [MitraController::class, 'getData']);
-    Route::get('/tableData', [MitraController::class, 'tableData']);
-    Route::get('/newMitra', [MitraController::class, 'newMitra']);
-    Route::get('/editMitra', [MitraController::class, 'editMitra']);
-    Route::get('/deleteMitra', [MitraController::class, 'deleteMitra']);
-    Route::get('/auto_generate', [MitraController::class, 'generatePin']);
-    // Route::get('/checkEmail', [MitraController::class, 'checkEmail']);
-    // Route::get('/checkPhone', [MitraController::class, 'checkPhone']);
-    Route::get('/getUser', [MitraController::class, 'getUser']);
-    Route::post('/store', [MitraController::class, 'store']);
-    Route::post('/update', [MitraController::class, 'update']);
-    Route::post('/delete', [MitraController::class, 'delete']);
+Route::prefix('/merchant-management')->group(function () {
+    Route::get('/', [MerchantController::class, 'index']);
+    Route::get('/getData', [MerchantController::class, 'getData']);
+    Route::get('/tableData', [MerchantController::class, 'tableData']);
+    Route::get('/newMerchant', [MerchantController::class, 'newMerchant']);
+    Route::get('/editMerchant', [MerchantController::class, 'editMerchant']);
+    Route::get('/deleteMerchant', [MerchantController::class, 'deleteMerchant']);
+    Route::get('/auto_generate', [MerchantController::class, 'generatePin']);
+    // Route::get('/checkEmail', [MerchantController::class, 'checkEmail']);
+    // Route::get('/checkPhone', [MerchantController::class, 'checkPhone']);
+    Route::get('/getUser', [MerchantController::class, 'getUser']);
+    Route::post('/store', [MerchantController::class, 'store']);
+    Route::post('/update', [MerchantController::class, 'update']);
+    Route::post('/delete', [MerchantController::class, 'delete']);
 });
 // Route::get('/user-management', [UserController::class, 'index']);
 
-Route::prefix('/user-management')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('/getData', [UserController::class, 'getData']);
-    Route::get('/tableData', [UserController::class, 'tableData']);
-    Route::get('/editUser', [UserController::class, 'editUser']);
-    Route::get('/deleteUser', [UserController::class, 'deleteUser']);
+Route::prefix('/customer-management')->group(function () {
+    Route::get('/', [CustomerController::class, 'index']);
+    Route::get('/getData', [CustomerController::class, 'getData']);
+    Route::get('/tableData', [CustomerController::class, 'tableData']);
+    Route::get('/editCustomer', [CustomerController::class, 'editCustomer']);
+    Route::get('/deleteCustomer', [CustomerController::class, 'deleteCustomer']);
 });
 
 Route::prefix('/web-config')->group(function () {

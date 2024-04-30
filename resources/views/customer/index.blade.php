@@ -5,7 +5,7 @@
     <div class="col">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h2 class="text-primary">User</h2>
+                <h2 class="text-primary">Customer</h2>
             </div>
             <div class="card-body">
                 <div class="formFilter mb-3">
@@ -52,9 +52,9 @@
 @endsection
 @section('script')
 <script>
-    function getDataUser() {
+    function getDataCustomer() {
         $.ajax({
-            url: '/user-management/getData',
+            url: '/customer-management/getData',
             data: {},
             beforeSend: function() {
                 $('#tableData').hide();
@@ -72,30 +72,30 @@
     }
 
         
-    function editUser() {
-        $.ajax({
-            url: '/user-management/editUser',
-            success: function(response) {
-                if(response.view){
-                    $("#viewModal").show()
-                    $("#viewModal").html(response.view)
-                    $("#modalEditUser").modal('show')
-                }
-            },
-            error : function(xhr, res, error){
-                alert(error)
-            }
-        });
-    }
+    // function editCustomer() {
+    //     $.ajax({
+    //         url: '/customer-management/editCustomer',
+    //         success: function(response) {
+    //             if(response.view){
+    //                 $("#viewModal").show()
+    //                 $("#viewModal").html(response.view)
+    //                 $("#modalEditCustomer").modal('show')
+    //             }
+    //         },
+    //         error : function(xhr, res, error){
+    //             alert(error)
+    //         }
+    //     });
+    // }
 
-    function deleteUser() {
+    function deleteCustomer() {
         $.ajax({
-            url: '/user-management/deleteUser',
+            url: '/customer-management/deleteCustomer',
             success: function(response) {
                 if(response.view){
                     $("#viewModal").show()
                     $("#viewModal").html(response.view)
-                    $("#modalDeleteUser").modal('show')
+                    $("#modalDeleteCustomer").modal('show')
                 }
             },
             error : function(xhr, res, error){
@@ -105,7 +105,7 @@
     }
 
     $(document).ready(function () {
-        getDataUser();
+        getDataCustomer();
 
         $.ajaxSetup({
           headers: {

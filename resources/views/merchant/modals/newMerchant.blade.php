@@ -1,8 +1,8 @@
-<div class="modal fade" id="modalNewMitra" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalNewMerchant" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">New Mitra</h5>
+                <h5 class="modal-title" id="exampleModalLabel">New Merchant</h5>
             </div>
             <form id="formSubmit">
                 @csrf
@@ -63,45 +63,45 @@
     </div>
 </div>
 <script>
-    $('#search_user').select2({
-        dropdownParent: $('#modalNewMitra'),
-        theme: "classic",
-        ajax: {
-            url: '/mitra-management/getUser',
-            dataType: 'json',
-            delay: 250,
-            data: function(params) {
-                var data = {
-                    User: params.term,
-                }
-                return data;
-            },
-            processResults: function(data) {
-                return {
-                    results: [{
-                        id: data[0].UniqueID,
-                        text: data[0].Name
-                    }]
-                };
-            }
-        }
-    });
+    // $('#search_user').select2({
+    //     dropdownParent: $('#modalNewMerchant'),
+    //     theme: "classic",
+    //     ajax: {
+    //         url: '/merchant-management/getUser',
+    //         dataType: 'json',
+    //         delay: 250,
+    //         data: function(params) {
+    //             var data = {
+    //                 User: params.term,
+    //             }
+    //             return data;
+    //         },
+    //         processResults: function(data) {
+    //             return {
+    //                 results: [{
+    //                     id: data[0].UniqueID,
+    //                     text: data[0].Name
+    //                 }]
+    //             };
+    //         }
+    //     }
+    // });
 
-    $('input[name="isExist"]').on("click", function() {
-        let isExist = $(this).prop("checked");
-        if(isExist){
-            $('.isNotExist').hide()
-            $('.isExist').show()
-        }else{
-            $('.isExist').hide()
-            $('.isNotExist').show()
-        }
-    });
+    // $('input[name="isExist"]').on("click", function() {
+    //     let isExist = $(this).prop("checked");
+    //     if(isExist){
+    //         $('.isNotExist').hide()
+    //         $('.isExist').show()
+    //     }else{
+    //         $('.isExist').hide()
+    //         $('.isNotExist').show()
+    //     }
+    // });
 
     $("#generatePin").on("click", function(e){
         e.preventDefault()
         $.ajax({
-            url : "/mitra-management/auto_generate",
+            url : "/merchant-management/auto_generate",
             type : "GET",
             dataType : "JSON",
             success: function(response){
@@ -117,7 +117,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/mitra-management/store',
+            url: '/merchant-management/store',
             data: $('#formSubmit').serialize(),
             beforeSend: function() {
                 $('#btnProcess').attr('disabled', 'disabled');
@@ -125,11 +125,11 @@
             },
             success: function(response) {
                 if(response.success){
-                    $('#modalNewMitra').modal('hide');
-                    getDataMitra();
+                    $('#modalNewMerchant').modal('hide');
+                    getDataMerchant();
                 }else{
-                     $('#modalNewMitra').modal('hide');
-                    getDataMitra();
+                     $('#modalNewMerchant').modal('hide');
+                    getDataMerchant();
                 }
             },
             error: function(response) {
